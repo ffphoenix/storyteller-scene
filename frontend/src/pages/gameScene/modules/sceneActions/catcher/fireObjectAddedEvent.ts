@@ -1,14 +1,9 @@
 import type { ActionProducer } from "../types";
-import type { Canvas, FabricObject, TPointerEvent } from "fabric";
+import type Konva from "konva";
 import { checkObjectUUIDs } from "../utils/checkObjectUUIDs";
 
-const fireObjectAddedEvent = (
-  canvas: Canvas,
-  producer: ActionProducer,
-  object: FabricObject,
-  event?: TPointerEvent,
-) => {
-  checkObjectUUIDs(object);
-  canvas.fire("sc:object:added", { producer, target: object, e: event });
+const fireObjectAddedEvent = (stage: Konva.Stage, producer: ActionProducer, object: Konva.Node, event?: any) => {
+  // checkObjectUUIDs(object);
+  // stage.fire("sc:object:added", { producer, target: object, e: event });
 };
 export default fireObjectAddedEvent;

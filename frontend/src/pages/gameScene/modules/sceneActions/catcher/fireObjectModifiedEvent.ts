@@ -1,29 +1,25 @@
-import { ActiveSelection, type Canvas, type FabricObject, type ModifiedEvent } from "fabric";
+import type Konva from "konva";
 import { checkObjectUUIDs } from "../utils/checkObjectUUIDs";
 import type { ModifyActionType } from "../types";
 
-const fireObjectModifiedEvent = (canvas: Canvas, event: ModifiedEvent) => {
-  const { target, transform } = event;
-  const producer = target.get("changeMadeBy") ?? "self";
-  if (producer !== "self") return;
+const fireObjectModifiedEvent = (stage: Konva.Stage, event: Konva.KonvaEventObject<any>) => {
+  // const target = event.target;
+  // const producer = target.getAttr("changeMadeBy") ?? "self";
+  // if (producer !== "self") return;
+  //
+  // if (target.getAttr("isChangedByHistory")) {
+  //   target.setAttr("isChangedByHistory", false);
+  //   return;
+  // }
+  //
+  // const objects = [target];
+  // checkObjectUUIDs(objects);
 
-  if (target.get("type") === "i-text" && !transform) return;
+  // Konva doesn't have a direct 'actionType' in move events, but we can infer it
+  // if we're using a Transformer, we'd listen to its events.
+  // For now, let's assume 'drag' as it's the most common manual modification.
+  const actionType: ModifyActionType = "drag";
 
-  if (target.isChangedByHistory) {
-    target.set({ isChangedByHistory: false });
-    return;
-  }
-  if (!transform) throw new Error("Object must have transform:" + JSON.stringify(event));
-  let object: FabricObject | FabricObject[];
-  if (target instanceof ActiveSelection) {
-    object = target.getObjects();
-  } else {
-    object = target;
-  }
-  checkObjectUUIDs(object);
-  const actionType = (
-    ["drag", "scale", "rotate", "scaleX", "scaleY", "skew"].includes(event.action ?? "") ? event.action : undefined
-  ) as ModifyActionType;
-  canvas.fire("sc:object:modified", { producer, target: object, actionType, transform });
+  // stage.fire("sc:object:modified", { producer, target: objects, actionType });
 };
 export default fireObjectModifiedEvent;

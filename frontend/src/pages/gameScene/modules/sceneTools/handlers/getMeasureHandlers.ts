@@ -1,102 +1,107 @@
-import { type MutableRefObject } from "react";
-import { type Canvas, type TPointerEventInfo } from "fabric";
-import type { MeasuringRef, MouseHandlers } from "../useSceneTools";
-import * as fabric from "fabric";
+import Konva from "konva";
+import type { Stage } from "konva/lib/Stage";
+import type { MouseHandlers } from "../useSceneTools";
 
-const getMeasureHandlers = (canvasRef: MutableRefObject<Canvas | null>, measuringRef: MeasuringRef): MouseHandlers => {
-  const canvas = canvasRef.current;
-  if (canvas === null) throw new Error("Canvas is not initialized");
+const getMeasureHandlers = (stage: Stage): MouseHandlers => {
+  stage.container().style.cursor = "crosshair";
+  let measuringState: {
+    start: Konva.Vector2d;
+    line: Konva.Line;
+    arrow: Konva.RegularPolygon;
+    label: Konva.Text;
+  } | null = null;
 
-  canvas.defaultCursor = "crosshair";
-  canvas.hoverCursor = "crosshair";
+  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+    const transform = stage.getAbsoluteTransform().copy().invert();
+    const relativePos = transform.point(pos);
 
-  const onMouseDown = (options: TPointerEventInfo) => {
-    // @TODO: pick correct point
-    const point = canvas.getScenePoint(options.e);
-    if (!measuringRef.current) {
+    if (!measuringState) {
       // start
-      const startPt = new fabric.Point(point.x, point.y);
       const red = "#ef4444"; // tailwind red-500
-      const line = new fabric.Line([startPt.x, startPt.y, startPt.x, startPt.y], {
+      const line = new Konva.Line({
+        points: [relativePos.x, relativePos.y, relativePos.x, relativePos.y],
         stroke: red,
         strokeWidth: 2,
-        selectable: false,
-        evented: false,
-        excludeFromExport: true,
+        listening: false,
       });
-      const arrow = new fabric.Triangle({
-        left: startPt.x,
-        top: startPt.y,
-        width: 10,
-        height: 12,
+      const arrow = new Konva.RegularPolygon({
+        x: relativePos.x,
+        y: relativePos.y,
+        sides: 3,
+        radius: 6,
         fill: red,
-        originX: "center",
-        originY: "center",
-        selectable: false,
-        evented: false,
-        excludeFromExport: true,
+        listening: false,
       });
-      const label = new fabric.Text("0 px", {
-        left: startPt.x,
-        top: startPt.y,
+      const label = new Konva.Text({
+        x: relativePos.x,
+        y: relativePos.y,
+        text: "0 px",
         fontSize: 14,
         fill: red,
-        backgroundColor: "rgba(255,255,255,0.6)",
-        selectable: false,
-        evented: false,
-        excludeFromExport: true,
+        background: "rgba(255,255,255,0.6)",
+        listening: false,
       });
-      canvas.add(line);
-      canvas.add(arrow);
-      canvas.add(label);
-      measuringRef.current = { start: startPt, line, arrow, label };
-      canvas.requestRenderAll();
+      const layer = stage.getLayers()[0];
+      layer.add(line);
+      layer.add(arrow);
+      layer.add(label);
+      measuringState = { start: relativePos, line, arrow, label };
+      stage.batchDraw();
     } else {
       // finish and clear temp objects
-      const { line, arrow, label } = measuringRef.current;
-      canvas.remove(line);
-      canvas.remove(arrow);
-      canvas.remove(label);
-      measuringRef.current = null;
-      canvas.requestRenderAll();
+      const { line, arrow, label } = measuringState;
+      line.destroy();
+      arrow.destroy();
+      label.destroy();
+      measuringState = null;
+      stage.batchDraw();
     }
   };
 
-  const onMouseMove = (options: TPointerEventInfo) => {
-    if (!measuringRef.current) return;
+  const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!measuringState) return;
 
-    const point = canvas.getScenePoint(options.e);
-    const { start, line, arrow, label } = measuringRef.current;
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+    const transform = stage.getAbsoluteTransform().copy().invert();
+    const relativePos = transform.point(pos);
+
+    const { start, line, arrow, label } = measuringState;
     // update line end
-    line.set({ x2: point.x, y2: point.y });
+    line.points([start.x, start.y, relativePos.x, relativePos.y]);
     // compute distance
-    const dx = point.x - start.x;
-    const dy = point.y - start.y;
+    const dx = relativePos.x - start.x;
+    const dy = relativePos.y - start.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    label.set({ text: `${Math.round(dist)} px` });
+    label.text(`${Math.round(dist)} px`);
     // position label at midpoint with slight offset perpendicular to line
-    const midX = (start.x + point.x) / 2;
-    const midY = (start.y + point.y) / 2;
+    const midX = (start.x + relativePos.x) / 2;
+    const midY = (start.y + relativePos.y) / 2;
     const angle = Math.atan2(dy, dx);
     const offset = 10;
     const offX = -Math.sin(angle) * offset;
     const offY = Math.cos(angle) * offset;
-    label.set({ left: midX + offX, top: midY + offY });
+    label.position({ x: midX + offX, y: midY + offY });
     // position and rotate arrow at end, pointing along the line
-    arrow.set({ left: point.x, top: point.y, angle: (angle * 180) / Math.PI + 90 });
-    canvas.requestRenderAll();
+    arrow.position({ x: relativePos.x, y: relativePos.y });
+    arrow.rotation((angle * 180) / Math.PI + 90);
+    stage.batchDraw();
   };
 
   const onMouseUp = () => {};
 
   const handlerDisposer = () => {
-    if (!measuringRef.current) return;
-    const { line, arrow, label } = measuringRef.current;
-    canvas.remove(line);
-    canvas.remove(arrow);
-    canvas.remove(label);
-    measuringRef.current = null;
-    canvas.requestRenderAll();
+    if (measuringState) {
+      const { line, arrow, label } = measuringState;
+      line.destroy();
+      arrow.destroy();
+      label.destroy();
+      measuringState = null;
+      stage.batchDraw();
+    }
+    stage.container().style.cursor = "default";
   };
 
   return {

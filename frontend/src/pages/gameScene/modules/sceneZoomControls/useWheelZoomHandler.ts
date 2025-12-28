@@ -1,35 +1,49 @@
 import { type MutableRefObject, useEffect } from "react";
-import { type Canvas, type TEvent } from "fabric";
-import * as fabric from "fabric";
 import SceneStore from "../../store/SceneStore";
 import { MAX_ZOOM, MIN_ZOOM } from "../../constants/uiConstants";
+import type { KonvaEventObject } from "konva/lib/Node";
+import type { Stage } from "konva/lib/Stage";
 
-const onWheel = (canvasRef: MutableRefObject<Canvas | null>, options: TEvent<WheelEvent>) => {
-  const canvas = canvasRef.current;
-  if (!canvas) return;
-
-  const event: WheelEvent = options.e;
-  let zoom = canvas.getZoom();
+const onWheel = (stage: Stage, e: KonvaEventObject<WheelEvent>) => {
+  const event = e.evt;
+  const oldZoom = stage.scaleX();
   const delta = event.deltaY;
   const factor = 0.999 ** delta;
 
-  zoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom * factor));
-  SceneStore.setCurrentZoom(zoom);
-  const point = new fabric.Point(event.offsetX, event.offsetY);
-  canvas.zoomToPoint(point, zoom);
+  const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, oldZoom * factor));
+  SceneStore.setCurrentZoom(newZoom);
+
+  const pointer = stage.getPointerPosition();
+  if (!pointer) return;
+
+  const mousePointTo = {
+    x: (pointer.x - stage.x()) / oldZoom,
+    y: (pointer.y - stage.y()) / oldZoom,
+  };
+
+  stage.scale({ x: newZoom, y: newZoom });
+
+  const newPos = {
+    x: pointer.x - mousePointTo.x * newZoom,
+    y: pointer.y - mousePointTo.y * newZoom,
+  };
+  stage.position(newPos);
+  stage.batchDraw();
+
   event.preventDefault();
   event.stopPropagation();
 };
 
-export default (canvasRef: MutableRefObject<Canvas | null>) => {
+export default (stageRef: MutableRefObject<Stage | null>) => {
   useEffect(() => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const onWheelHandler = (options: TEvent<WheelEvent>) => onWheel(canvasRef, options);
-    canvas.on("mouse:wheel", onWheelHandler);
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const onWheelHandler = (e: KonvaEventObject<WheelEvent>) => onWheel(stage, e);
+    stage.on("wheel", onWheelHandler);
 
     return () => {
-      canvas.off("mouse:wheel", onWheelHandler);
+      stage.off("wheel", onWheelHandler);
     };
   }, []);
 };

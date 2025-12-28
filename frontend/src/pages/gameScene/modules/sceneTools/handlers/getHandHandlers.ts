@@ -1,51 +1,42 @@
-import { type MutableRefObject } from "react";
-import { type Canvas, type TPointerEventInfo } from "fabric";
+import Konva from "konva";
+import type { Stage } from "konva/lib/Stage";
 import type { MouseHandlers } from "../useSceneTools";
-import * as fabric from "fabric";
 
-const getHandHandlers = (
-  canvasRef: MutableRefObject<Canvas | null>,
-  isPanningRef: MutableRefObject<boolean>,
-): MouseHandlers => {
-  const canvas = canvasRef.current;
-  if (canvas === null) throw new Error("Canvas is not initialized");
+const getHandHandlers = (stage: Stage): MouseHandlers => {
+  let isPanning = false;
 
-  canvas.defaultCursor = "grab";
-  canvas.hoverCursor = "grab";
+  stage.container().style.cursor = "grab";
+
   const onMouseDown = () => {
-    isPanningRef.current = true;
-    canvas.setCursor("grabbing");
-    canvas.defaultCursor = "grabbing";
-
-    canvas.requestRenderAll();
+    isPanning = true;
+    stage.container().style.cursor = "grabbing";
   };
 
-  const onMouseMove = (options: TPointerEventInfo) => {
-    if (!isPanningRef.current) return;
-    canvas.setCursor("grabbing");
-    canvas.defaultCursor = "grabbing";
+  const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!isPanning) return;
+    stage.container().style.cursor = "grabbing";
 
-    const event = options.e as MouseEvent;
-    const vpt = canvas.viewportTransform || fabric.iMatrix.concat();
-    // movementX/Y are in CSS pixels relative to the element
-    vpt[4] += event.movementX;
-    vpt[5] += event.movementY;
-    canvas.setViewportTransform(vpt);
-    canvas.requestRenderAll();
+    const evt = e.evt;
+    const newPos = {
+      x: stage.x() + evt.movementX,
+      y: stage.y() + evt.movementY,
+    };
+    stage.position(newPos);
+    stage.batchDraw();
   };
 
   const onMouseUp = () => {
-    isPanningRef.current = false;
-    canvas.setCursor("grab");
-    canvas.defaultCursor = "grab";
-    canvas.requestRenderAll();
+    isPanning = false;
+    stage.container().style.cursor = "grab";
   };
 
   return {
     onMouseDown,
     onMouseUp,
     onMouseMove,
-    handlerDisposer: () => null,
+    handlerDisposer: () => {
+      stage.container().style.cursor = "default";
+    },
   };
 };
 export default getHandHandlers;

@@ -1,32 +1,39 @@
-import { type MutableRefObject } from "react";
-import { type Canvas, type TPointerEventInfo } from "fabric";
+import Konva from "konva";
+import type { Stage } from "konva/lib/Stage";
 import type { MouseHandlers } from "../useSceneTools";
-import * as fabric from "fabric";
 import SceneStore from "../../../store/SceneStore";
 import fireObjectAddedEvent from "../../sceneActions/catcher/fireObjectAddedEvent";
+import { generateUUID } from "../../../utils/uuid";
+import getActiveLayer from "../utils/getActiveLayer";
 
-const useDrawRectHandlers = (canvasRef: MutableRefObject<Canvas | null>): MouseHandlers => {
-  const canvas = canvasRef.current;
-  if (canvas === null) throw new Error("Canvas is not initialized");
+const getTextHandlers = (stage: Stage): MouseHandlers => {
+  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+    const transform = stage.getAbsoluteTransform().copy().invert();
+    const relativePos = transform.point(pos);
 
-  const onMouseDown = (options: TPointerEventInfo) => {
-    // @TODO: pick correct point
-    const point = canvas.getScenePoint(options.e);
-    const text = new fabric.IText("Text", {
-      left: point.x,
-      top: point.y,
-      fill: SceneStore.tools.textTool.color,
+    const text = new Konva.Text({
+      id: generateUUID(),
+      x: relativePos.x,
+      y: relativePos.y,
+      text: "Text",
       fontSize: SceneStore.tools.textTool.fontSize,
-      editable: true,
+      fill: SceneStore.tools.textTool.color,
+      draggable: true,
+      name: "object",
     });
-    canvas.add(text);
-    canvas.setActiveObject(text);
-    if (typeof text.enterEditing === "function") {
-      text.enterEditing();
-      text.selectAll();
-    }
-    fireObjectAddedEvent(canvas, "self", text);
+
+    const layer = getActiveLayer(stage);
+    layer.add(text);
+    layer.batchDraw();
+
+    fireObjectAddedEvent(stage, "self", text);
     SceneStore.setActiveTool("select");
+
+    // In a real Konva app, you'd handle text editing with a hidden textarea
+    // This is a bit more complex than Fabric's IText.
+    // For now, we just add the text.
   };
 
   const onMouseMove = () => {};
@@ -39,4 +46,4 @@ const useDrawRectHandlers = (canvasRef: MutableRefObject<Canvas | null>): MouseH
     handlerDisposer: () => null,
   };
 };
-export default useDrawRectHandlers;
+export default getTextHandlers;

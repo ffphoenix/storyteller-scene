@@ -1,14 +1,13 @@
-import { type Canvas, type FabricObject } from "fabric";
+import type Konva from "konva";
 import SceneHistoryStore from "../SceneHistoryStore";
 import type { MutableRefObject } from "react";
 import doHistoryAction from "./doHistoryAction";
-import doActionWithGroup from "./doActionWithGroup";
 import { getObjectTransformProps } from "../../utils/getObjectTransformProps";
 import { toJS } from "mobx";
 
-const undoSceneAction = (canvasRef: MutableRefObject<Canvas | null>) => {
-  const canvas = canvasRef.current;
-  if (!canvas) return;
+const undoSceneAction = (stageRef: MutableRefObject<Konva.Stage | null>) => {
+  const stage = stageRef.current;
+  if (!stage) return;
 
   const historyItem = SceneHistoryStore.latestUndoHistoryItem;
   if (!historyItem) return;
@@ -16,16 +15,19 @@ const undoSceneAction = (canvasRef: MutableRefObject<Canvas | null>) => {
   if (historyItem.action === "modify" && !historyItem.originalProps) return;
 
   try {
-    canvas.discardActiveObject();
     const { originalProps, object, action, pan } = toJS(historyItem);
     let transformProps;
-    if (Array.isArray(object) && action === "modify") {
-      transformProps = doActionWithGroup(canvas, object as FabricObject[], (groupObject) =>
-        doHistoryAction("undo", canvas, action, groupObject, pan, originalProps),
-      );
+
+    // Simplification for Konva: handle multi-selection by iterating or creating a group if needed
+    // For now, let's focus on single objects or simple arrays
+    if (Array.isArray(object)) {
+      // @TODO: handle multi-object undo/redo properly in Konva
+      object.forEach((obj: any) => {
+        doHistoryAction("undo", stage, action, obj, pan, originalProps);
+      });
     } else {
-      transformProps = getObjectTransformProps(object as FabricObject);
-      doHistoryAction("undo", canvas, action, object as FabricObject, pan, originalProps);
+      transformProps = getObjectTransformProps(object as Konva.Node);
+      doHistoryAction("undo", stage, action, object as Konva.Node, pan, originalProps);
     }
 
     SceneHistoryStore.popUndoHistoryItem();
@@ -34,6 +36,6 @@ const undoSceneAction = (canvasRef: MutableRefObject<Canvas | null>) => {
     console.error(e);
     SceneHistoryStore.popUndoHistoryItem();
   }
-  canvas.requestRenderAll();
+  stage.batchDraw();
 };
 export default undoSceneAction;

@@ -1,56 +1,78 @@
-import type { MutableRefObject } from "react";
-import { type Canvas } from "fabric";
-import * as fabric from "fabric";
-import SceneStore from "../../store/SceneStore";
+import Konva from "konva";
+import SceneStore, { type Tool } from "../../store/SceneStore";
+import type { Stage } from "konva/lib/Stage";
+import { toJS } from "mobx";
 
-const setRightClickHandler = (canvasRef: MutableRefObject<Canvas | null>) => {
-  if (!canvasRef.current) return () => {};
-  const canvas = canvasRef.current;
+const setRightClickHandler = (stage: Stage) => {
+  let isPanning = false;
+  let rightButtonDown = false;
+  let startPos: { x: number; y: number } | null = null;
+  let savedActiveTool: Tool | null = null;
 
-  return canvas.on({
-    "mouse:down": (options) => {
-      const event = options.e as MouseEvent;
-      if (event.button === 2) {
-        SceneStore.setRightClickIsRightButtonDown(true);
-        SceneStore.setRightClickStartPos({ x: event.clientX, y: event.clientY });
+  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const event = e.evt;
+    if (event.button === 2) {
+      rightButtonDown = true;
+      startPos = { x: event.clientX, y: event.clientY };
+    }
+  };
+
+  const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const event = e.evt;
+
+    if (!rightButtonDown) return;
+    if (!startPos) return;
+
+    const dx = Math.abs(event.clientX - startPos.x);
+    const dy = Math.abs(event.clientY - startPos.y);
+    if (dx >= 2 || dy >= 2) {
+      if (!isPanning) {
+        savedActiveTool = toJS(SceneStore.activeTool);
+        SceneStore.setActiveTool("hand");
       }
-    },
-    "mouse:move": (options) => {
-      const event = options.e as MouseEvent;
 
-      if (!SceneStore.UI.rightClick.isRightButtonDown) return;
-      const startPos = SceneStore.UI.rightClick.startPos;
-      if (!startPos) return;
+      isPanning = true;
+      stage.container().style.cursor = "grabbing";
 
-      const dx = Math.abs(event.clientX - startPos.x);
-      const dy = Math.abs(event.clientY - startPos.y);
-      if (dx >= 2 || dy >= 2) {
-        SceneStore.setRightClickPanning(true);
-        canvas.setCursor("grabbing");
-        const vpt = canvas.viewportTransform || fabric.iMatrix.concat();
-        vpt[4] += event.movementX;
-        vpt[5] += event.movementY;
-        canvas.setViewportTransform(vpt);
-        canvas.requestRenderAll();
-      }
-    },
-    "mouse:up": (options) => {
-      const event = options.e as MouseEvent;
-      if (!SceneStore.UI.rightClick.isRightButtonDown || event.button !== 2) return;
-      SceneStore.setRightClickIsRightButtonDown(false);
+      const newPos = {
+        x: stage.x() + event.movementX,
+        y: stage.y() + event.movementY,
+      };
+      stage.position(newPos);
+      stage.batchDraw();
+    }
+  };
 
-      if (SceneStore.UI.rightClick.isPanning) {
-        SceneStore.setRightClickPanning(false);
-        SceneStore.setRightClickStartPos({ x: 0, y: 0 });
-        // @TODO: change to propper handling
-        const activeTool = SceneStore.activeTool;
-        const cursor = activeTool === "hand" ? "grab" : "default";
-        canvas.setCursor(cursor);
-        canvas.requestRenderAll();
-        return;
-      }
-      SceneStore.setContextMenu(true, event.clientX, event.clientY);
-    },
-  });
+  const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const event = e.evt;
+    if (!rightButtonDown || event.button !== 2) return;
+
+    rightButtonDown = false;
+    console.log("right button up", savedActiveTool);
+    if (savedActiveTool) {
+      SceneStore.setActiveTool(savedActiveTool);
+      savedActiveTool = null;
+    }
+    const activeTool = SceneStore.activeTool;
+    stage.container().style.cursor = activeTool === "hand" ? "grab" : "default";
+    stage.batchDraw();
+
+    if (isPanning) {
+      isPanning = false;
+      startPos = null;
+      return;
+    }
+    SceneStore.setContextMenu(true, event.clientX, event.clientY);
+  };
+
+  stage.on("mousedown", onMouseDown);
+  stage.on("mousemove", onMouseMove);
+  stage.on("mouseup", onMouseUp);
+
+  return () => {
+    stage.off("mousedown", onMouseDown);
+    stage.off("mousemove", onMouseMove);
+    stage.off("mouseup", onMouseUp);
+  };
 };
 export default setRightClickHandler;

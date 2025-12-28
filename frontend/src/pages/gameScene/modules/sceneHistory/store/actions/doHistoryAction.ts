@@ -1,26 +1,26 @@
-import { type Canvas, FabricObject } from "fabric";
+import type Konva from "konva";
 import removeObject from "../../../sceneActions/producer/removeObject";
 import modifyObject from "../../../sceneActions/producer/modifyObject";
 import addObject from "../../../sceneActions/producer/addObject";
 
 export const doHistoryAction = (
   queue: "undo" | "redo",
-  canvas: Canvas,
+  stage: Konva.Stage,
   action: "add" | "modify" | "remove",
-  object: FabricObject,
+  object: Konva.Node,
   pan: { x: number; y: number },
-  originalProps: Partial<FabricObject> = {},
+  originalProps: any = {},
 ) => {
   const undoMapByAction = {
-    add: () => removeObject(canvas, object),
-    modify: () => modifyObject(canvas, object, originalProps, pan),
-    remove: () => addObject(canvas, object, pan),
+    add: () => removeObject(stage, object),
+    modify: () => modifyObject(stage, object, originalProps, pan),
+    remove: () => addObject(stage, object, pan),
   };
 
   const redoMapByAction = {
-    add: () => addObject(canvas, object, pan),
-    modify: () => modifyObject(canvas, object, originalProps, pan),
-    remove: () => removeObject(canvas, object),
+    add: () => addObject(stage, object, pan),
+    modify: () => modifyObject(stage, object, originalProps, pan),
+    remove: () => removeObject(stage, object),
   };
 
   const actionMap = queue === "undo" ? undoMapByAction : redoMapByAction;

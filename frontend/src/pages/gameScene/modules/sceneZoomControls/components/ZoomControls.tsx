@@ -1,25 +1,43 @@
 import React, { type MutableRefObject } from "react";
-import { type Canvas } from "fabric";
+import Konva from "konva";
 import SceneStore from "../../../store/SceneStore";
 import { observer } from "mobx-react-lite";
 import { MAX_ZOOM, MIN_ZOOM } from "../../../constants/uiConstants";
 
-const zoomByFactor = (canvasRef: MutableRefObject<Canvas | null>, factor: number) => {
-  if (!canvasRef.current) return;
-  const canvas = canvasRef.current;
-  const current = canvas.getZoom();
-  const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, current * factor));
-  const point = canvas.getCenterPoint();
-  canvas.zoomToPoint(point, next);
-  SceneStore.setCurrentZoom(next);
+const zoomByFactor = (stageRef: MutableRefObject<Konva.Stage | null>, factor: number) => {
+  if (!stageRef.current) return;
+  const stage = stageRef.current;
+  const oldZoom = stage.scaleX();
+  const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, oldZoom * factor));
+
+  const center = {
+    x: stage.width() / 2,
+    y: stage.height() / 2,
+  };
+
+  const mousePointTo = {
+    x: (center.x - stage.x()) / oldZoom,
+    y: (center.y - stage.y()) / oldZoom,
+  };
+
+  stage.scale({ x: newZoom, y: newZoom });
+
+  const newPos = {
+    x: center.x - mousePointTo.x * newZoom,
+    y: center.y - mousePointTo.y * newZoom,
+  };
+  stage.position(newPos);
+  stage.batchDraw();
+
+  SceneStore.setCurrentZoom(newZoom);
 };
 
 type ZoomControlsProps = {
-  canvasRef: MutableRefObject<Canvas | null>;
+  stageRef: MutableRefObject<Konva.Stage | null>;
 };
-export default observer(({ canvasRef }: ZoomControlsProps) => {
-  const handleZoomIn = () => zoomByFactor(canvasRef, 1.2);
-  const handleZoomOut = () => zoomByFactor(canvasRef, 1 / 1.2);
+export default observer(({ stageRef }: ZoomControlsProps) => {
+  const handleZoomIn = () => zoomByFactor(stageRef, 1.2);
+  const handleZoomOut = () => zoomByFactor(stageRef, 1 / 1.2);
 
   return (
     <div className="absolute right-3 top-3 flex flex-col gap-2 z-50">

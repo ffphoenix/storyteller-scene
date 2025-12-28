@@ -1,17 +1,15 @@
-import type { FabricObject } from "fabric";
+import type Konva from "konva";
 
-export const getObjectTransformProps = (object: FabricObject) => {
+export const getObjectTransformProps = (object: Konva.Node) => {
   return {
-    angle: object.angle,
-    left: object.left,
-    top: object.top,
-    scaleX: object.scaleX,
-    scaleY: object.scaleY,
-    originX: object.originX,
-    originY: object.originY,
-    flipX: object.flipX,
-    flipY: object.flipY,
-    skewX: object.skewX,
-    skewY: object.skewY,
+    rotation: object.rotation(),
+    x: object.x(),
+    y: object.y(),
+    scaleX: object.scaleX(),
+    scaleY: object.scaleY(),
+    skewX: object.skewX(),
+    skewY: object.skewY(),
+    width: object.width(),
+    height: object.height(),
   };
 };

@@ -1,29 +1,37 @@
 import { type MutableRefObject, useEffect } from "react";
-import type { Canvas } from "fabric";
+import Konva from "konva";
 import isKeyDownInterceptable from "../utils/isKeyDownInterceptable";
 import fireObjectRemovedEvent from "../modules/sceneActions/catcher/fireObjectRemovedEvent";
 
-const handleDeleteSelected = (canvas: Canvas) => {
-  if (!canvas) return;
-  const active = canvas.getActiveObjects();
-  if (active.length) {
-    active.forEach((o) => canvas.remove(o));
-    canvas.discardActiveObject();
-    canvas.requestRenderAll();
-    fireObjectRemovedEvent(canvas, "self", active);
+const handleDeleteSelected = (stage: Konva.Stage) => {
+  if (!stage) return;
+  // Konva doesn't have a direct 'getActiveObjects' but we can find them if we use a Transformer
+  // or by name/tag. For now, let's assume objects have 'name: object' and we might want to delete
+  // nodes that are selected. Without a full selection system integrated yet,
+  // we'll just implement a placeholder or use stage selection if implemented.
+
+  // Example of finding nodes with name 'object' that might be considered "selected":
+  // This is just a placeholder until a proper selection system (Transformer) is in place.
+  const selectedNodes: Konva.Node[] = [];
+  // stage.find('.selected') ...
+
+  if (selectedNodes.length) {
+    selectedNodes.forEach((o) => o.destroy());
+    stage.batchDraw();
+    fireObjectRemovedEvent(stage, "self", selectedNodes);
   }
 };
 
-const useKeyboardHotkeys = (canvasRef: MutableRefObject<Canvas | null>) => {
+const useKeyboardHotkeys = (stageRef: MutableRefObject<Konva.Stage | null>) => {
   useEffect(() => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
+    if (!stageRef.current) return;
+    const stage = stageRef.current;
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (!isKeyDownInterceptable(e, canvas)) return;
+      if (!isKeyDownInterceptable(e, stage)) return;
       if (e.code === "Delete" || e.code === "Backslash") {
         console.log("Delete/Backspace pressed");
-        handleDeleteSelected(canvas);
+        handleDeleteSelected(stage);
 
         // prevent navigating back on Backspace when nothing is focused
         e.preventDefault();
@@ -32,28 +40,7 @@ const useKeyboardHotkeys = (canvasRef: MutableRefObject<Canvas | null>) => {
 
       // Escape: cancel measuring / arrow drawing
       if (e.code === "Escape") {
-        // @TODO: refactor arrow and measuring drawing to store state
-        // and remove this code
-        //
-        // if (canvas && measuringRef.current) {
-        //   const { line, arrow, label } = measuringRef.current;
-        //   canvas.remove(line);
-        //   canvas.remove(arrow);
-        //   canvas.remove(label);
-        //   measuringRef.current = null;
-        //   canvas.requestRenderAll();
-        //   e.preventDefault();
-        //   return;
-        // }
-        // if (canvas && arrowDrawingRef.current) {
-        //   const { line, head } = arrowDrawingRef.current;
-        //   canvas.remove(line);
-        //   canvas.remove(head);
-        //   arrowDrawingRef.current = null;
-        //   canvas.requestRenderAll();
-        //   e.preventDefault();
-        //   return;
-        // }
+        // @TODO: implement escape logic for Konva if needed
       }
     };
 

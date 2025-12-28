@@ -1,21 +1,20 @@
 import { makeAutoObservable } from "mobx";
-import type { FabricObject } from "fabric";
-import * as fabric from "fabric";
+import type Konva from "konva";
 import type { ModifyActionType } from "../../sceneActions/types";
 
 type Action = "add" | "modify" | "remove";
 type Pan = { x: number; y: number };
 type EventItem = {
   pan: Pan;
-  object: FabricObject | FabricObject[];
-  originalProps?: Partial<FabricObject>;
+  object: Konva.Node | Konva.Node[];
+  originalProps?: any;
   actionType?: ModifyActionType;
 };
 export type HistoryItem = {
   action: Action;
-  object: FabricObject | FabricObject[];
+  object: Konva.Node | Konva.Node[];
   pan: Pan;
-  originalProps?: Partial<FabricObject>;
+  originalProps?: any;
   actionType?: ModifyActionType;
 };
 type SceneHistory = {

@@ -7,19 +7,19 @@ import "./ToolMenu.css";
 import SceneStore from "../../../store/SceneStore";
 import { observer } from "mobx-react-lite";
 import UploadImageButton from "./UploadImageButton";
-import type { Canvas } from "fabric";
+import type { Stage } from "konva/lib/Stage";
 
 type Props = {
-  canvasRef: MutableRefObject<Canvas | null>;
+  stageRef: MutableRefObject<Stage | null>;
 };
 
-const ToolMenu: React.FC<Props> = ({ canvasRef }) => {
-  const printCanvas = () => console.log("Print canvas", canvasRef.current?.toJSON());
+const ToolMenu: React.FC<Props> = ({ stageRef }) => {
+  const printCanvas = () => console.log("Print stage", stageRef.current?.toJSON());
   const onClear = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.clear();
-    // canvas.setBackgroundColor("#f8fafc", () => canvas.requestRenderAll());
+    const stage = stageRef.current;
+    if (!stage) return;
+    stage.getLayers().forEach((layer) => layer.destroyChildren());
+    stage.batchDraw();
   };
   return (
     <div className="flex h-full w-full flex-col gap-3 pb-70">
@@ -64,7 +64,7 @@ const ToolMenu: React.FC<Props> = ({ canvasRef }) => {
           onClick={() => SceneStore.setActiveTool("measure")}
           tooltip="Measure (distance)"
         />
-        <UploadImageButton canvasRef={canvasRef} />
+        {/*<UploadImageButton canvasRef={stageRef} />*/}
       </div>
 
       <div className="h-px w-full bg-gray-200" />

@@ -71,6 +71,7 @@ type SceneStore = {
   setRightClickPanning: (isPanning: boolean) => void;
   setRightClickStartPos: (pos: { x: number; y: number }) => void;
   setRightClickIsRightButtonDown: (isRightButtonDown: boolean) => void;
+  setActiveLayer: (layerId: string) => void;
 };
 
 const sceneStore: SceneStore = makeAutoObservable<SceneStore>({
@@ -153,6 +154,7 @@ const sceneStore: SceneStore = makeAutoObservable<SceneStore>({
   setRightClickStartPos: (pos: { x: number; y: number }) => (sceneStore.UI.rightClick.startPos = pos),
   setRightClickIsRightButtonDown: (isRightButtonDown: boolean) =>
     (sceneStore.UI.rightClick.isRightButtonDown = isRightButtonDown),
+  setActiveLayer: (layerId: string) => (sceneStore.layers.activeLayerId = layerId),
 });
 
 export default sceneStore;

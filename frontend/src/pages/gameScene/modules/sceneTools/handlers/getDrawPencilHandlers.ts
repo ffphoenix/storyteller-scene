@@ -1,38 +1,63 @@
-import { type MutableRefObject } from "react";
-import { type Canvas } from "fabric";
+import Konva from "konva";
+import type { Stage } from "konva/lib/Stage";
 import type { MouseHandlers } from "../useSceneTools";
-import * as fabric from "fabric";
 import SceneStore from "../../../store/SceneStore";
-import getEmptyHandlers from "./getEmptyHandlers";
 import { autorun } from "mobx";
 import fireObjectAddedEvent from "../../sceneActions/catcher/fireObjectAddedEvent";
+import { generateUUID } from "../../../utils/uuid";
+import getActiveLayer from "../utils/getActiveLayer";
 
-const getDrawPencilHandlers = (canvasRef: MutableRefObject<Canvas | null>): MouseHandlers => {
-  const canvas = canvasRef.current;
-  if (canvas === null) throw new Error("Canvas is not initialized");
+const getDrawPencilHandlers = (stage: Stage): MouseHandlers => {
+  let isDrawing = false;
+  let lastLine: Konva.Line | null = null;
 
-  const autorunDispose = autorun(
-    () => {
-      console.log("autorun getDrawPencilHandlers");
-      canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-      canvas.isDrawingMode = true;
-      const brush = canvas.freeDrawingBrush;
-      brush.color = SceneStore.tools.drawTools.strokeColor;
-      brush.width = SceneStore.tools.drawTools.strokeWidth;
-    },
-    { delay: 500 },
-  );
+  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    isDrawing = true;
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+    const transform = stage.getAbsoluteTransform().copy().invert();
+    const relativePos = transform.point(pos);
 
-  const onPathCreatedDisposer = canvas.on("path:created", (e) => {
-    const path = e.path;
-    fireObjectAddedEvent(canvas, "self", path);
-  });
+    lastLine = new Konva.Line({
+      id: generateUUID(),
+      stroke: SceneStore.tools.drawTools.strokeColor,
+      strokeWidth: SceneStore.tools.drawTools.strokeWidth,
+      globalCompositeOperation: "source-over",
+      points: [relativePos.x, relativePos.y],
+      draggable: true,
+      name: "object",
+    });
+
+    const layer = getActiveLayer(stage);
+    layer.add(lastLine);
+  };
+
+  const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!isDrawing || !lastLine) return;
+
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+    const transform = stage.getAbsoluteTransform().copy().invert();
+    const relativePos = transform.point(pos);
+
+    const newPoints = lastLine.points().concat([relativePos.x, relativePos.y]);
+    lastLine.points(newPoints);
+    stage.batchDraw();
+  };
+
+  const onMouseUp = () => {
+    if (isDrawing && lastLine) {
+      fireObjectAddedEvent(stage, "self", lastLine);
+    }
+    isDrawing = false;
+    lastLine = null;
+  };
+
   return {
-    ...getEmptyHandlers(),
-    handlerDisposer: () => {
-      autorunDispose();
-      onPathCreatedDisposer();
-    },
+    onMouseDown,
+    onMouseMove,
+    onMouseUp,
+    handlerDisposer: () => null,
   };
 };
 export default getDrawPencilHandlers;

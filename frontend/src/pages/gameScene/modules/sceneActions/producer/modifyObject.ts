@@ -1,20 +1,9 @@
-import { type Canvas, type FabricObject, Group } from "fabric";
+import type Konva from "konva";
 import { setPanKeepingZoom } from "../../sceneHistory/utils/setPanKeepingZoom";
 
-const modifyObject = (
-  canvas: Canvas,
-  object: FabricObject,
-  originalProps: Partial<FabricObject>,
-  pan: { x: number; y: number },
-) => {
-  object.set({ ...originalProps, isChangedByHistory: true });
-
-  if (object instanceof Group) {
-    object.getObjects().forEach((o) => o.setCoords());
-  } else {
-    object.setCoords();
-  }
-  setPanKeepingZoom(canvas, pan);
+const modifyObject = (stage: Konva.Stage, object: Konva.Node, originalProps: any, pan: { x: number; y: number }) => {
+  object.setAttrs({ ...originalProps, isChangedByHistory: true });
+  setPanKeepingZoom(stage, pan);
 };
 
 export default modifyObject;

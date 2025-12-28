@@ -1,56 +1,59 @@
-import { type MutableRefObject } from "react";
-import { type Canvas, type TPointerEventInfo } from "fabric";
-import type { DrawingRef, MouseHandlers } from "../useSceneTools";
-import * as fabric from "fabric";
+import Konva from "konva";
+import type { Stage } from "konva/lib/Stage";
+import type { MouseHandlers } from "../useSceneTools";
 import SceneStore from "../../../store/SceneStore";
 import fireObjectAddedEvent from "../../sceneActions/catcher/fireObjectAddedEvent";
+import { generateUUID } from "../../../utils/uuid";
+import drawActiveLayer from "../utils/drawActiveLayer";
 
-const getDrawCircleHandlers = (canvasRef: MutableRefObject<Canvas | null>, drawingRef: DrawingRef): MouseHandlers => {
-  const canvas = canvasRef.current;
-  if (canvas === null) throw new Error("Canvas is not initialized");
+const getDrawCircleHandlers = (stage: Stage): MouseHandlers => {
+  let activeObject: Konva.Circle | null = null;
+  let relativePos: Konva.Vector2d | null = null;
 
-  const onMouseDown = (options: TPointerEventInfo) => {
-    // @TODO: pick correct point
-    const point = canvas.getScenePoint(options.e);
-    drawingRef.current.origin = new fabric.Point(point.x, point.y);
+  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+    const transform = stage.getAbsoluteTransform().copy().invert();
+    relativePos = transform.point(pos);
 
-    const circle = new fabric.Circle({
-      left: point.x,
-      top: point.y,
+    activeObject = new Konva.Circle({
+      id: generateUUID(),
+      x: relativePos.x,
+      y: relativePos.y,
       radius: 1,
       fill: SceneStore.tools.drawTools.fillColor,
       stroke: SceneStore.tools.drawTools.strokeColor,
       strokeWidth: SceneStore.tools.drawTools.strokeWidth,
-      originX: "center",
-      originY: "center",
-      selectable: false,
-      objectCaching: false,
+      draggable: true,
+      name: "object",
     });
-    drawingRef.current.activeObject = circle;
-    canvas.add(circle);
+
+    const layer = stage.findOne(`#${SceneStore.activeLayerId}`) as Konva.Layer;
+    layer.add(activeObject);
+    layer.draw();
   };
 
-  const onMouseMove = (options: TPointerEventInfo) => {
-    const active = drawingRef.current.activeObject;
-    const origin = drawingRef.current.origin;
-    if (!active || !origin) return;
-    const point = canvas.getScenePoint(options.e);
-    const dx = point.x - origin.x;
-    const dy = point.y - origin.y;
+  const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!activeObject || !relativePos) return;
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+    const transform = stage.getAbsoluteTransform().copy().invert();
+    const currentPos = transform.point(pos);
+
+    const dx = currentPos.x - relativePos.x;
+    const dy = currentPos.y - relativePos.y;
     const r = Math.sqrt(dx * dx + dy * dy);
-    active.set({ left: origin.x, top: origin.y, radius: r });
-    canvas.requestRenderAll();
+    activeObject.radius(r);
+    drawActiveLayer(stage);
   };
 
   const onMouseUp = () => {
-    const active = drawingRef.current.activeObject;
-    if (active) {
-      active.set({ selectable: true, objectCaching: true });
+    if (activeObject) {
+      fireObjectAddedEvent(stage, "self", activeObject);
     }
-    if (active) fireObjectAddedEvent(canvas, "self", active);
-    canvas.requestRenderAll();
-    drawingRef.current.activeObject = null;
-    drawingRef.current.origin = undefined;
+    activeObject = null;
+    relativePos = null;
+    stage.batchDraw();
   };
 
   return {

@@ -1,13 +1,13 @@
 import { type MutableRefObject, useEffect } from "react";
 import SceneHistoryStore from "./store/SceneHistoryStore";
-import { type Canvas } from "fabric";
+import type Konva from "konva";
 import isKeyDownInterceptable from "../../utils/isKeyDownInterceptable";
 import undoSceneAction from "./store/actions/undoSceneAction";
 import redoSceneAction from "./store/actions/redoSceneAction";
 import getPan from "./utils/getPan";
 import { autorun, toJS } from "mobx";
 
-export default function useSceneHistory(canvasRef: MutableRefObject<Canvas | null>) {
+export default function useSceneHistory(stageRef: MutableRefObject<Konva.Stage | null>) {
   useEffect(() => {
     autorun(
       () => {
@@ -16,49 +16,51 @@ export default function useSceneHistory(canvasRef: MutableRefObject<Canvas | nul
       },
       { delay: 500 },
     );
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const stage = stageRef.current;
+    if (!stage) return;
 
-    const onObjectAddedDisposer = canvas.on("sc:object:added", (e) => {
+    const onObjectAdded = (e: any) => {
       const object = e.target;
       console.log("[object:added][history]", object);
-      SceneHistoryStore.addUndoHistoryItem("add", { pan: getPan(canvasRef), object });
-    });
+      SceneHistoryStore.addUndoHistoryItem("add", { pan: getPan(stageRef), object });
+    };
+    stage.on("sc:object:added", onObjectAdded);
 
-    const onObjectModifiedDisposer = canvas.on("sc:object:modified", (e) => {
+    const onObjectModified = (e: any) => {
       const object = e.target;
-      const transform = e.transform;
-
+      // Konva doesn't have transform.original, we might need to store it before drag
       SceneHistoryStore.addUndoHistoryItem("modify", {
         object,
-        pan: getPan(canvasRef),
-        originalProps: transform?.original ?? undefined,
+        pan: getPan(stageRef),
+        originalProps: e.originalProps ?? undefined,
         actionType: e.actionType,
       });
-    });
+    };
+    stage.on("sc:object:modified", onObjectModified);
 
-    const onObjectRemovedDisposer = canvas.on("sc:object:removed", ({ producer, target }) => {
+    const onObjectRemoved = ({ producer, target }: any) => {
       if (producer !== "self") return;
-      SceneHistoryStore.addUndoHistoryItem("remove", { pan: getPan(canvasRef), object: target });
-    });
+      SceneHistoryStore.addUndoHistoryItem("remove", { pan: getPan(stageRef), object: target });
+    };
+    stage.on("sc:object:removed", onObjectRemoved);
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (!isKeyDownInterceptable(e, canvas)) return;
+      if (!isKeyDownInterceptable(e, stage)) return;
       const isCtrlOrMeta = e.ctrlKey || e.metaKey;
       if (isCtrlOrMeta && e.code === "KeyZ") {
         console.log(`[history][ctrl + z][shift: ${e.shiftKey}]`);
 
         if (e.shiftKey) {
-          redoSceneAction(canvasRef);
+          redoSceneAction(stageRef);
         } else {
-          undoSceneAction(canvasRef);
+          undoSceneAction(stageRef);
         }
 
         e.preventDefault();
         return;
       }
       if (isCtrlOrMeta && e.code === "KeyY") {
-        redoSceneAction(canvasRef);
+        redoSceneAction(stageRef);
         e.preventDefault();
         return;
       }
@@ -67,9 +69,9 @@ export default function useSceneHistory(canvasRef: MutableRefObject<Canvas | nul
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      onObjectAddedDisposer();
-      onObjectModifiedDisposer();
-      onObjectRemovedDisposer();
+      stage.off("sc:object:added", onObjectAdded);
+      stage.off("sc:object:modified", onObjectModified);
+      stage.off("sc:object:removed", onObjectRemoved);
       window.removeEventListener("keydown", onKeyDown);
     };
   }, []);
