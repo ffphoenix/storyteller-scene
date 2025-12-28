@@ -12,6 +12,8 @@ const getDrawPencilHandlers = (stage: Stage): MouseHandlers => {
   let lastLine: Konva.Line | null = null;
 
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (e.evt.button !== 0) return;
+
     isDrawing = true;
     const pos = stage.getPointerPosition();
     if (!pos) return;
@@ -24,7 +26,7 @@ const getDrawPencilHandlers = (stage: Stage): MouseHandlers => {
       strokeWidth: SceneStore.tools.drawTools.strokeWidth,
       globalCompositeOperation: "source-over",
       points: [relativePos.x, relativePos.y],
-      draggable: true,
+      draggable: false,
       name: "object",
     });
 

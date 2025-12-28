@@ -9,7 +9,6 @@ import useKeyboardHotkeys from "./hooks/useKeyboardHotkeys";
 import "./declarations/FabricObject";
 import useSceneHistory from "./modules/sceneHistory/useSceneHistory";
 import SceneContextMenu from "./modules/sceneTools/components/SceneContextMenu";
-import Konva from "konva";
 
 const GameScenePage: React.FC = () => {
   const { stageRef, containerRef } = useStage();

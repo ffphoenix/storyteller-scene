@@ -7,7 +7,9 @@ const getHandHandlers = (stage: Stage): MouseHandlers => {
 
   stage.container().style.cursor = "grab";
 
-  const onMouseDown = () => {
+  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (e.evt.button !== 0) return;
+
     isPanning = true;
     stage.container().style.cursor = "grabbing";
   };

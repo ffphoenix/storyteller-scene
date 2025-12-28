@@ -11,7 +11,8 @@ const getDrawRectHandlers = (stage: Stage): MouseHandlers => {
   let relativePos: Konva.Vector2d | null = null;
 
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    console.log("onMouseDown", stage);
+    if (e.evt.button !== 0) return;
+
     const pos = stage.getPointerPosition();
     if (!pos) return;
 
@@ -27,7 +28,7 @@ const getDrawRectHandlers = (stage: Stage): MouseHandlers => {
       fill: SceneStore.tools.drawTools.fillColor,
       stroke: SceneStore.tools.drawTools.strokeColor,
       strokeWidth: SceneStore.tools.drawTools.strokeWidth,
-      draggable: true,
+      draggable: false,
       name: "object",
     });
 

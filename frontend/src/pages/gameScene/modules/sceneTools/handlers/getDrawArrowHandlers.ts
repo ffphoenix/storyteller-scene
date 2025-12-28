@@ -12,6 +12,8 @@ const getDrawArrowHandlers = (stage: Stage): MouseHandlers => {
   let arrowState: { start: Konva.Vector2d; line: Konva.Line; head: Konva.RegularPolygon } | null = null;
 
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (e.evt.button !== 0) return;
+
     const pos = stage.getPointerPosition();
     if (!pos) return;
     const transform = stage.getAbsoluteTransform().copy().invert();
@@ -82,8 +84,8 @@ const getDrawArrowHandlers = (stage: Stage): MouseHandlers => {
 
     const group = new Konva.Group({
       id: generateUUID(),
-      draggable: true,
-      name: "arrow-object",
+      draggable: false,
+      name: "object",
     });
 
     const finalLine = new Konva.Line({

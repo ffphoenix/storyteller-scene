@@ -4,6 +4,7 @@ import { autorun } from "mobx";
 import Konva from "konva";
 import type { Stage } from "konva/lib/Stage";
 import getHandHandlers from "./handlers/getHandHandlers";
+import getSelectHandlers from "./handlers/getSelectHandlers";
 import getEmptyHandlers from "./handlers/getEmptyHandlers";
 import getDrawRectHandlers from "./handlers/getDrawRectHandlers";
 import getDrawCircleHandlers from "./handlers/getDrawCircleHandlers";
@@ -23,7 +24,7 @@ export type MouseHandlers = {
 const getMouseHandlers = (activeTool: Tool, stage: Stage): MouseHandlers => {
   const handlersMap = {
     hand: () => getHandHandlers(stage),
-    select: () => getEmptyHandlers(),
+    select: () => getSelectHandlers(stage),
     pencil: () => getDrawPencilHandlers(stage),
     rect: () => getDrawRectHandlers(stage),
     circle: () => getDrawCircleHandlers(stage),
