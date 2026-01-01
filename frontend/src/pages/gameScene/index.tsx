@@ -6,7 +6,6 @@ import ZoomControls from "./modules/sceneZoomControls/components/ZoomControls";
 import useWheelZoomHandler from "./modules/sceneZoomControls/useWheelZoomHandler";
 import useSceneTools from "./modules/sceneTools/useSceneTools";
 import useKeyboardHotkeys from "./hooks/useKeyboardHotkeys";
-import "./declarations/FabricObject";
 import useSceneHistory from "./modules/sceneHistory/useSceneHistory";
 import SceneContextMenu from "./modules/sceneTools/components/SceneContextMenu";
 
