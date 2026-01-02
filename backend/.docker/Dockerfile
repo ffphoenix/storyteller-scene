@@ -6,6 +6,5 @@ COPY . .
 
 RUN yarn install
 
-#RUN npm run build
 
 CMD [ "yarn", "run", "start:dev" ]
