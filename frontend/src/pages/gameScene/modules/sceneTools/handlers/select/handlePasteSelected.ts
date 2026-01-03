@@ -4,6 +4,7 @@ import fireObjectAddedEvent from "../../../sceneActions/catcher/fireObjectAddedE
 import { generateUUID } from "../../../../utils/uuid";
 import getTransformer from "../../../sceneTransformer/getTransformer";
 import toolsStore from "../../store/ToolsStore";
+import clearTransformerNodesSelection from "../../../sceneTransformer/clearTransformerNodesSelection";
 
 export const handlePasteSelected = (stage: Konva.Stage) => {
   const clipboardNodes = toolsStore.select.clipboardNodes;
@@ -18,6 +19,7 @@ export const handlePasteSelected = (stage: Konva.Stage) => {
   clipboardNodes.forEach((nodeConfig) => {
     const newNode = Konva.Node.create(nodeConfig);
     newNode.id(generateUUID());
+    newNode.draggable(true);
     newNode.x(newNode.x() + offset);
     newNode.y(newNode.y() + offset);
     activeLayer.add(newNode);
@@ -26,6 +28,7 @@ export const handlePasteSelected = (stage: Konva.Stage) => {
 
   const transformer = getTransformer(stage);
   if (transformer) {
+    clearTransformerNodesSelection(stage);
     transformer.nodes(newNodes);
     transformer.moveToTop();
   }
