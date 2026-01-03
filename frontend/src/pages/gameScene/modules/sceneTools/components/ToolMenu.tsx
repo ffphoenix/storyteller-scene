@@ -14,6 +14,7 @@ type Props = {
 };
 
 const ToolMenu: React.FC<Props> = ({ stageRef }) => {
+  const [gridPosition, setGridPosition] = React.useState<"top" | "bottom">("bottom");
   const printCanvas = () => console.log("Print stage", JSON.parse(stageRef.current?.toJSON() ?? "{}"));
   const onClear = () => {
     const stage = stageRef.current;
@@ -74,9 +75,22 @@ const ToolMenu: React.FC<Props> = ({ stageRef }) => {
           aria-label="Delete Selected"
           text
           raised
-          icon={<TrashIcon />}
+          icon={<LayersIcon />}
           className="tooltip-button"
-          onClick={() => {}}
+          tooltip="Toggle grid layer elements overlaping"
+          onClick={() => {
+            if (!stageRef.current) return;
+
+            const gridLayer = stageRef.current.findOne("#grid-layer");
+            if (!gridLayer) return;
+
+            if (gridPosition === "bottom") {
+              gridLayer.moveToTop();
+            } else {
+              gridLayer.moveToBottom();
+            }
+            setGridPosition(gridPosition === "bottom" ? "top" : "bottom");
+          }}
         />
         <Button
           aria-label="Clear Canvas"

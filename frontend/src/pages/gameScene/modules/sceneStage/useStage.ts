@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import Konva from "konva";
 import handleCanvasResize from "./handleCanvasResize";
+import createGridLayer from "./createGridLayer";
 import { generateUUID } from "../../utils/uuid";
 import SceneStore from "../../store/SceneStore";
 
@@ -15,6 +16,9 @@ const useStage = () => {
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight,
     });
+
+    const gridLayer = createGridLayer(stage);
+    stage.add(gridLayer);
 
     const layerUuid = generateUUID();
     const layer = new Konva.Layer({

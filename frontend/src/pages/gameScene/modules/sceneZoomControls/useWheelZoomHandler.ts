@@ -8,6 +8,7 @@ const onWheel = (stage: Stage, e: KonvaEventObject<WheelEvent>) => {
   const event = e.evt;
   const oldZoom = stage.scaleX();
   const delta = event.deltaY;
+  // TODO: fix factor number and set some proper steps for scroll
   const factor = 0.999 ** delta;
 
   const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, oldZoom * factor));

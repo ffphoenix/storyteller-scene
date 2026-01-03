@@ -1,0 +1,59 @@
+import Konva from "konva";
+
+const createCanvasGrid = (size: number) => {
+  const canvas = document.createElement("canvas");
+
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+
+  if (ctx) {
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.7)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(size, 0);
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, size);
+    ctx.stroke();
+  }
+
+  return canvas;
+};
+
+const convertCanvasToImage = (canvas: HTMLCanvasElement) => {
+  const image = new Image(canvas.width, canvas.height);
+  image.src = canvas.toDataURL();
+  return image;
+};
+
+const createGridLayer = () => {
+  const layer = new Konva.Layer({
+    id: "grid-layer",
+    listening: false,
+  });
+
+  // const pattern
+  const canvasPattern = convertCanvasToImage(createCanvasGrid(70));
+
+  const gridRect = new Konva.Rect({
+    stroke: "rgba(0, 0, 0, 1)",
+    strokeWidth: 2,
+    x: 0,
+    y: 0,
+    fillPatternImage: canvasPattern,
+    fillPatternRepeat: "repeat",
+    listening: false,
+  });
+  console.log(gridRect.toJSON());
+  gridRect.width(50 * 70);
+  gridRect.height(50 * 70);
+  gridRect.moveToTop();
+  layer.add(gridRect);
+  layer.moveToTop();
+  layer.draw();
+
+  return layer;
+};
+
+export default createGridLayer;
