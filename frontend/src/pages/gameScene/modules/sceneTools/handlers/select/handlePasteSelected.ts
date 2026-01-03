@@ -15,7 +15,7 @@ export const handlePasteSelected = (stage: Konva.Stage) => {
 
   const newNodes: Konva.Node[] = [];
   const offset = 20;
-
+  // TODO: add cursor position offset
   clipboardNodes.forEach((nodeConfig) => {
     const newNode = Konva.Node.create(nodeConfig);
     newNode.id(generateUUID());
