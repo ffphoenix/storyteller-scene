@@ -491,6 +491,16 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CRUDErrorBadRequestResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -541,7 +551,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -558,6 +568,16 @@
         "responses": {
           "200": {
             "description": "The game has been successfully updated."
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CRUDErrorBadRequestResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -578,7 +598,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -607,7 +627,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -901,6 +921,54 @@
           "shortUrl"
         ]
       },
+      "FieldError": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Form field name"
+          },
+          "message": {
+            "type": "string",
+            "description": "Form field error message"
+          }
+        },
+        "required": [
+          "field",
+          "message"
+        ]
+      },
+      "CRUDErrorBadRequestResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "error status code"
+          },
+          "message": {
+            "type": "string",
+            "description": "error message"
+          },
+          "errors": {
+            "description": "Error messages by fields",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldError"
+            }
+          },
+          "timestamp": {
+            "format": "date-time",
+            "type": "string",
+            "description": "timestamp"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message",
+          "errors",
+          "timestamp"
+        ]
+      },
       "UpdateGameDto": {
         "type": "object",
         "properties": {
@@ -917,8 +985,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "example": "1"
+            "type": "number",
+            "example": 1
           },
           "shortUrl": {
             "type": "string",

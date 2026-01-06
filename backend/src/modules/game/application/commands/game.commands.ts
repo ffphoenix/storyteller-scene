@@ -8,7 +8,7 @@ export class CreateGameCommand {
 
 export class ModifyGameCommand {
   constructor(
-    public readonly id: bigint,
+    public readonly id: number,
     public readonly name: string,
     public readonly ownerId: number,
   ) {}
@@ -16,14 +16,14 @@ export class ModifyGameCommand {
 
 export class StartGameCommand {
   constructor(
-    public readonly id: bigint,
+    public readonly id: number,
     public readonly ownerId: number,
   ) {}
 }
 
 export class DeleteGameCommand {
   constructor(
-    public readonly id: bigint,
+    public readonly id: number,
     public readonly ownerId: number,
   ) {}
 }

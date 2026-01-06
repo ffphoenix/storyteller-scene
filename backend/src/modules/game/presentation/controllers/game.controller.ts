@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Put, Param, Delete, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Put, Param, Delete, Get, UseGuards, Req, HttpStatus } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateGameDto, UpdateGameDto, GameResponseDto } from '../../application/dto/game.dto';
@@ -7,6 +7,7 @@ import { GetMyGamesQuery, GetGameDataQuery } from '../../application/queries/gam
 import { JwtAuthGuard } from '../../../account/auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../../../common/decorators/user.decorator';
 import { User } from '../../../account/users/user.entity';
+import { CRUDErrorBadRequestResponse } from '../../../../common/interfaces/formValidationExceptionResponse.interface';
 
 @ApiTags('games')
 @ApiBearerAuth()
@@ -21,6 +22,7 @@ export class GameController {
   @Post()
   @ApiOperation({ summary: 'Create a new game' })
   @ApiResponse({ status: 201, description: 'The game has been successfully created.', type: String })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: CRUDErrorBadRequestResponse })
   async create(@Body() createGameDto: CreateGameDto, @CurrentUser() user: User) {
     return this.commandBus.execute(new CreateGameCommand(createGameDto.name, createGameDto.shortUrl, user.id));
   }
@@ -28,22 +30,23 @@ export class GameController {
   @Put(':id')
   @ApiOperation({ summary: 'Update game name' })
   @ApiResponse({ status: 200, description: 'The game has been successfully updated.' })
-  async update(@Param('id') id: string, @Body() updateGameDto: UpdateGameDto, @CurrentUser() user: User) {
-    return this.commandBus.execute(new ModifyGameCommand(BigInt(id), updateGameDto.name, user.id));
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: CRUDErrorBadRequestResponse })
+  async update(@Param('id') id: number, @Body() updateGameDto: UpdateGameDto, @CurrentUser() user: User) {
+    return this.commandBus.execute(new ModifyGameCommand(Number(id), updateGameDto.name, user.id));
   }
 
   @Post(':id/start')
   @ApiOperation({ summary: 'Start a game' })
   @ApiResponse({ status: 200, description: 'The game has been successfully started.' })
-  async start(@Param('id') id: string, @CurrentUser() user: User) {
-    return this.commandBus.execute(new StartGameCommand(BigInt(id), user.id));
+  async start(@Param('id') id: number, @CurrentUser() user: User) {
+    return this.commandBus.execute(new StartGameCommand(Number(id), user.id));
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a game' })
   @ApiResponse({ status: 200, description: 'The game has been successfully deleted.' })
-  async delete(@Param('id') id: string, @CurrentUser() user: User) {
-    return this.commandBus.execute(new DeleteGameCommand(BigInt(id), user.id));
+  async delete(@Param('id') id: number, @CurrentUser() user: User) {
+    return this.commandBus.execute(new DeleteGameCommand(Number(id), user.id));
   }
 
   @Get()

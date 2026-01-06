@@ -117,6 +117,53 @@ export interface JwtTokensResponse {
   refreshToken: string;
 }
 
+export interface CreateGameDto {
+  /** @example "My Awesome Game" */
+  name: string;
+  /**
+   * Exactly 8 characters
+   * @example "abcdefgh"
+   */
+  shortUrl: string;
+}
+
+export interface FieldError {
+  /** Form field name */
+  field: string;
+  /** Form field error message */
+  message: string;
+}
+
+export interface CRUDErrorBadRequestResponse {
+  /** error status code */
+  statusCode: number;
+  /** error message */
+  message: string;
+  /** Error messages by fields */
+  errors: FieldError[];
+  /**
+   * timestamp
+   * @format date-time
+   */
+  timestamp: string;
+}
+
+export interface UpdateGameDto {
+  /** @example "New Game Name" */
+  name: string;
+}
+
+export interface GameResponseDto {
+  /** @example 1 */
+  id: number;
+  /** @example "abcdefgh" */
+  shortUrl: string;
+  /** @example "My Awesome Game" */
+  name: string;
+  /** @example "CREATED" */
+  status: "CREATED" | "STARTED";
+}
+
 import type {
   AxiosInstance,
   AxiosRequestConfig,
@@ -322,12 +369,14 @@ export class Api<
      * @tags users
      * @name Create
      * @request POST:/api/users
+     * @secure
      */
     create: (data: CreateUserDto, params: RequestParams = {}) =>
       this.request<User, ErrorResponse>({
         path: `/api/users`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -339,11 +388,13 @@ export class Api<
      * @tags users
      * @name FindAll
      * @request GET:/api/users
+     * @secure
      */
     findAll: (params: RequestParams = {}) =>
       this.request<User[], ErrorResponse>({
         path: `/api/users`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -371,11 +422,13 @@ export class Api<
      * @tags users
      * @name FindOne
      * @request GET:/api/users/{id}
+     * @secure
      */
     findOne: (id: number, params: RequestParams = {}) =>
       this.request<User, ErrorResponse>({
         path: `/api/users/${id}`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -386,12 +439,14 @@ export class Api<
      * @tags users
      * @name Update
      * @request PATCH:/api/users/{id}
+     * @secure
      */
     update: (id: number, data: UpdateUserDto, params: RequestParams = {}) =>
       this.request<User, ErrorResponse>({
         path: `/api/users/${id}`,
         method: "PATCH",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -403,11 +458,13 @@ export class Api<
      * @tags users
      * @name Delete
      * @request DELETE:/api/users/{id}
+     * @secure
      */
     delete: (id: number, params: RequestParams = {}) =>
       this.request<void, ErrorResponse>({
         path: `/api/users/${id}`,
         method: "DELETE",
+        secure: true,
         ...params,
       }),
   };
@@ -458,6 +515,116 @@ export class Api<
       this.request<void, any>({
         path: `/api/auth/logout`,
         method: "POST",
+        ...params,
+      }),
+  };
+  games = {
+    /**
+     * No description
+     *
+     * @tags games
+     * @name Create
+     * @summary Create a new game
+     * @request POST:/api/games
+     * @secure
+     */
+    create: (data: CreateGameDto, params: RequestParams = {}) =>
+      this.request<string, CRUDErrorBadRequestResponse>({
+        path: `/api/games`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags games
+     * @name FindAll
+     * @summary Get all games for current user
+     * @request GET:/api/games
+     * @secure
+     */
+    findAll: (params: RequestParams = {}) =>
+      this.request<GameResponseDto[], any>({
+        path: `/api/games`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags games
+     * @name Update
+     * @summary Update game name
+     * @request PUT:/api/games/{id}
+     * @secure
+     */
+    update: (id: number, data: UpdateGameDto, params: RequestParams = {}) =>
+      this.request<void, CRUDErrorBadRequestResponse>({
+        path: `/api/games/${id}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags games
+     * @name Delete
+     * @summary Delete a game
+     * @request DELETE:/api/games/{id}
+     * @secure
+     */
+    delete: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/games/${id}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags games
+     * @name Start
+     * @summary Start a game
+     * @request POST:/api/games/{id}/start
+     * @secure
+     */
+    start: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/games/${id}/start`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags games
+     * @name FindOne
+     * @summary Get game data by ID or short URL
+     * @request GET:/api/games/{idOrShortUrl}
+     * @secure
+     */
+    findOne: (idOrShortUrl: string, params: RequestParams = {}) =>
+      this.request<GameResponseDto, any>({
+        path: `/api/games/${idOrShortUrl}`,
+        method: "GET",
+        secure: true,
+        format: "json",
         ...params,
       }),
   };

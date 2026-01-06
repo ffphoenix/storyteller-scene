@@ -21,8 +21,8 @@ export class UpdateGameDto {
 }
 
 export class GameResponseDto {
-  @ApiProperty({ example: '1' })
-  id: string;
+  @ApiProperty({ example: 1 })
+  id: number;
 
   @ApiProperty({ example: 'abcdefgh' })
   shortUrl: string;

@@ -1,19 +1,17 @@
 import { runInAction } from "mobx";
-import type { AxiosError, AxiosResponse } from "axios";
+import type { AxiosError } from "axios";
 import type { DataStorage } from "../../createDataStorage";
 import type { CRUDErrorBadRequestResponse } from "../../../../../generated/api";
 
 export default <T>(
   DataStorage: DataStorage<T>,
-  create: () => Promise<AxiosResponse<T>>,
-  update: () => Promise<AxiosResponse<T>>,
+  create: () => Promise<any>,
+  update: () => Promise<any>,
   fetchList: () => void,
 ) => {
-  const updateStorage = (response: AxiosResponse<T>) => {
+  const updateStorage = () => {
     runInAction(() => {
-      DataStorage.current = {
-        ...response.data,
-      };
+      DataStorage.resetCurrent();
       DataStorage.togglePopup();
       DataStorage.formUI.isLoading = false;
     });
