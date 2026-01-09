@@ -28,6 +28,7 @@ import {
   GetSceneLayersHandler,
 } from './application/queries/handlers/game-scene-query.handlers';
 import { GameSceneKafkaPublisher, GameSceneEventsHandler } from './infrastructure/kafka/game-scene-kafka.publisher';
+import { CreateDefaultSceneOnGameCreatedHandler } from './application/events/handlers/game-created.handlers';
 
 const CommandHandlers = [
   CreateGameSceneHandler,
@@ -43,7 +44,7 @@ const CommandHandlers = [
 
 const QueryHandlers = [GetGameScenesHandler, GetGameSceneByIdHandler, GetSceneLayersHandler];
 
-const EventHandlers = [GameSceneEventsHandler];
+const EventHandlers = [GameSceneEventsHandler, CreateDefaultSceneOnGameCreatedHandler];
 
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature([GameSceneEntity, GameSceneLayerEntity])],

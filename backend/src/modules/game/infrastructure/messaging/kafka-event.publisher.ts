@@ -10,9 +10,12 @@ export class KafkaEventPublisher implements OnModuleInit, OnModuleDestroy {
   private producer: Producer;
 
   constructor(private configService: ConfigService) {
+    const brokerConfig = this.configService.get<string>('KAFKA_BROKER');
+    if (!brokerConfig) throw new Error('KAFKA_BROKER is not set');
+
     this.kafka = new Kafka({
       clientId: 'game-service',
-      brokers: [this.configService.get<string>('KAFKA_BROKER') || 'localhost:9092'],
+      brokers: [brokerConfig],
     });
     this.producer = this.kafka.producer();
   }
@@ -27,11 +30,9 @@ export class KafkaEventPublisher implements OnModuleInit, OnModuleDestroy {
 
   async publish(event: any) {
     const topic = `game.${event.constructor.name}`;
-    // Convert bigint to string for JSON serialization
-    const payload = JSON.parse(JSON.stringify(event, (_, v) => (typeof v === 'bigint' ? v.toString() : v)));
     await this.producer.send({
       topic,
-      messages: [{ value: JSON.stringify(payload) }],
+      messages: [{ value: JSON.stringify(event) }],
     });
   }
 }

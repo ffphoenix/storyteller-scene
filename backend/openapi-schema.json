@@ -683,7 +683,7 @@
         ]
       }
     },
-    "/api/api/game-scenes": {
+    "/api/game-scenes": {
       "post": {
         "operationId": "create",
         "parameters": [],
@@ -748,7 +748,7 @@
         ]
       }
     },
-    "/api/api/game-scenes/{id}": {
+    "/api/game-scenes/{id}": {
       "get": {
         "operationId": "findOne",
         "parameters": [
@@ -841,7 +841,7 @@
         ]
       }
     },
-    "/api/api/game-scenes/{sceneId}/layers": {
+    "/api/game-scenes/{sceneId}/layers": {
       "post": {
         "operationId": "createLayer",
         "parameters": [
@@ -907,7 +907,7 @@
         ]
       }
     },
-    "/api/api/game-scenes/{sceneId}/layers/{layerId}": {
+    "/api/game-scenes/{sceneId}/layers/{layerId}": {
       "patch": {
         "operationId": "updateLayer",
         "parameters": [

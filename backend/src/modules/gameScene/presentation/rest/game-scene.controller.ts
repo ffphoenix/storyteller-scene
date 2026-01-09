@@ -18,7 +18,7 @@ import { JwtAuthGuard } from '../../../account/auth/guards/jwt-auth.guard';
 @ApiTags('game-scenes')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('api/game-scenes')
+@Controller('game-scenes')
 export class GameSceneController {
   constructor(
     private readonly commandBus: CommandBus,

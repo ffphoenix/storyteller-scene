@@ -7,7 +7,7 @@ export class GameScene extends AggregateRoot {
   private id: string;
   private gameId: number;
   private name: string;
-  private stageJSON: any;
+  private stageJSON: object;
   private stageWidth: number;
   private stageHeight: number;
   private backgroundColor: string;
@@ -20,7 +20,7 @@ export class GameScene extends AggregateRoot {
     id: string,
     gameId: number,
     name: string,
-    stageJSON: any,
+    stageJSON: object,
     stageWidth: number,
     stageHeight: number,
     backgroundColor: string,
@@ -69,14 +69,15 @@ export class GameScene extends AggregateRoot {
       0,
     );
 
-    const initialStageJSON = {
-      width: stageWidth,
-      height: stageHeight,
-      layers: [
+    const defaultJSON = {
+      className: 'Stage',
+      children: [
         {
-          id: defaultLayer.id,
-          name: defaultLayer.name,
-          objects: [],
+          attrs: {
+            id: defaultLayer.id,
+          },
+          className: 'Background',
+          children: [],
         },
       ],
     };
@@ -85,7 +86,7 @@ export class GameScene extends AggregateRoot {
       id,
       gameId,
       name,
-      initialStageJSON,
+      defaultJSON,
       stageWidth,
       stageHeight,
       backgroundColor,
@@ -109,16 +110,7 @@ export class GameScene extends AggregateRoot {
       if (!data.name || data.name.trim().length === 0) throw new Error('Name cannot be empty');
       this.name = data.name;
     }
-    if (data.stageWidth !== undefined) {
-      if (data.stageWidth <= 0) throw new Error('Stage width must be positive');
-      this.stageWidth = data.stageWidth;
-      this.stageJSON.width = this.stageWidth;
-    }
-    if (data.stageHeight !== undefined) {
-      if (data.stageHeight <= 0) throw new Error('Stage height must be positive');
-      this.stageHeight = data.stageHeight;
-      this.stageJSON.height = this.stageHeight;
-    }
+
     if (data.backgroundColor !== undefined) this.backgroundColor = data.backgroundColor;
     if (data.gridType !== undefined) this.gridType = data.gridType;
     if (data.gridCellSize !== undefined) {
@@ -136,8 +128,8 @@ export class GameScene extends AggregateRoot {
     const newLayer = new GameSceneLayer(id, name, isLocked, isVisible, order);
     this.layers.push(newLayer);
 
-    if (!this.stageJSON.layers) this.stageJSON.layers = [];
-    this.stageJSON.layers.push({
+    if (!this.stageJSON.children) this.stageJSON.children = [];
+    this.stageJSON.children.push({
       id: newLayer.id,
       name: newLayer.name,
       objects: [],
@@ -150,7 +142,7 @@ export class GameScene extends AggregateRoot {
 
     layer.update(name, isLocked, isVisible);
 
-    const stageLayer = this.stageJSON.layers.find((l: any) => l.id === id);
+    const stageLayer = this.stageJSON.children.find((l: any) => l.id === id);
     if (stageLayer) {
       if (name !== undefined) stageLayer.name = name;
     }
@@ -217,7 +209,7 @@ export class GameScene extends AggregateRoot {
   getName(): string {
     return this.name;
   }
-  getStageJSON(): any {
+  getStageJSON(): object {
     return this.stageJSON;
   }
   getStageWidth(): number {

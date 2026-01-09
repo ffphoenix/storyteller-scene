@@ -10,9 +10,12 @@ export class GameSceneKafkaPublisher implements OnModuleInit, OnModuleDestroy {
   private producer: Producer;
 
   constructor(private configService: ConfigService) {
+    const brokerConfig = this.configService.get<string>('KAFKA_BROKER');
+    if (!brokerConfig) throw new Error('KAFKA_BROKER is not set');
+
     this.kafka = new Kafka({
       clientId: 'game-scene-service',
-      brokers: [this.configService.get<string>('KAFKA_BROKER') || 'localhost:9092'],
+      brokers: [brokerConfig],
     });
     this.producer = this.kafka.producer();
   }

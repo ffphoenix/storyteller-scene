@@ -1,0 +1,12 @@
+import { EventsHandler, IEventHandler, CommandBus } from '@nestjs/cqrs';
+import { GameCreatedEvent } from '../../../../game/domain/events/game.events';
+import { CreateGameSceneCommand } from '../../commands/impl/game-scene.commands';
+
+@EventsHandler(GameCreatedEvent)
+export class CreateDefaultSceneOnGameCreatedHandler implements IEventHandler<GameCreatedEvent> {
+  constructor(private readonly commandBus: CommandBus) {}
+
+  async handle(event: GameCreatedEvent) {
+    await this.commandBus.execute(new CreateGameSceneCommand(event.id, 'New game scene'));
+  }
+}
