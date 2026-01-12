@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Put, Param, Delete, Get, UseGuards, HttpStatus } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { CreateGameDto, UpdateGameDto, GameResponseDto } from '../../application/dto/game.dto';
+import { CreateGameDto, UpdateGameDto, GameResponseDto } from '../dto/game.dto';
 import { CreateGameCommand } from '../../application/commands/impl/create-game.command';
 import { ModifyGameCommand } from '../../application/commands/impl/modify-game.command';
 import { StartGameCommand } from '../../application/commands/impl/start-game.command';
