@@ -10,6 +10,7 @@ export type SceneLayer = {
 export type Tool = "select" | "pencil" | "rect" | "circle" | "arrow" | "text" | "measure" | "hand" | "moveLayer";
 
 type SceneStore = {
+  stageJSON: object;
   layers: {
     activeLayerId: string;
     list: SceneLayer[];
@@ -75,6 +76,8 @@ type SceneStore = {
 };
 
 const sceneStore: SceneStore = makeAutoObservable<SceneStore>({
+  isActive: true,
+  stageJSON: {},
   UI: {
     currentZoom: 100,
     rightClick: {

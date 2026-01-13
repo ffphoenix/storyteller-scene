@@ -1,12 +1,11 @@
 import Layout from "../layouts/Layout";
 import loginRoute from "../pages/auth/login/route";
 import GuestLayout from "../layouts/GuestLayout";
-import GameLayout from "../layouts/GameLayout";
 import { redirect, type RouteObject } from "react-router";
 import Dashboard from "../pages/Dashboard";
 import GameRoute from "../pages/game/route";
-import GameScenePage from "../pages/gameScene";
 import { tokenManager } from "../utils/apiClient";
+import { GameSceneRoute } from "../pages/gameScene/route";
 
 const routes: RouteObject[] = [
   {
@@ -27,16 +26,7 @@ const routes: RouteObject[] = [
     ],
   },
 
-  {
-    path: "play",
-    Component: GameLayout,
-    children: [
-      {
-        path: ":gameId",
-        Component: GameScenePage,
-      },
-    ],
-  },
+  GameSceneRoute,
   {
     path: "auth",
     loader() {
