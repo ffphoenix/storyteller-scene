@@ -23,13 +23,6 @@ const useStage = () => {
     const gridLayer = createGridLayer();
     stage.add(gridLayer);
 
-    const layerUuid = generateUUID();
-    const layer = new Konva.Layer({
-      id: layerUuid,
-    });
-    stage.add(layer);
-    SceneStore.setActiveLayer(layerUuid);
-
     stageRef.current = stage;
 
     handleCanvasResize(stage, containerRef);

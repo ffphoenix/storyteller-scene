@@ -7,12 +7,14 @@ import useWheelZoomHandler from "./modules/sceneZoomControls/useWheelZoomHandler
 import useSceneTools from "./modules/sceneTools/useSceneTools";
 import useSceneHistory from "./modules/sceneHistory/useSceneHistory";
 import SceneContextMenu from "./modules/sceneTools/components/SceneContextMenu";
+import useSceneSocket from "./modules/sceneSocket/useSceneSocket";
 
 const GameScenePage: React.FC = () => {
   const { stageRef, containerRef } = useStage();
   useWheelZoomHandler(stageRef);
   useSceneTools(stageRef);
   useSceneHistory(stageRef);
+  useSceneSocket();
 
   console.log("GameScenePage rendered");
 
