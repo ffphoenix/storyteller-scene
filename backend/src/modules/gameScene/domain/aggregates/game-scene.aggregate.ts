@@ -3,11 +3,30 @@ import { GameSceneLayer } from '../entities/game-scene-layer.entity';
 import { GridMetricSystem, GridType } from './game-scene.types';
 import { SceneObjectAddedEvent, SceneObjectModifiedEvent, SceneObjectDeletedEvent } from '../events/scene-object.events';
 
+export type KonvaNode = {
+  className: string;
+  attrs?: {
+    id?: string;
+    name?: string;
+    width?: number;
+    height?: number;
+    x?: number;
+    y?: number;
+    scaleX?: number;
+    scaleY?: number;
+    rotation?: number;
+    opacity?: number;
+    draggable?: boolean;
+    visible?: boolean;
+  };
+  children?: KonvaNode[];
+};
+
 export class GameScene extends AggregateRoot {
   private id: string;
   private gameId: number;
   private name: string;
-  private stageJSON: object;
+  private stageJSON: KonvaNode;
   private stageWidth: number;
   private stageHeight: number;
   private backgroundColor: string;
@@ -21,7 +40,7 @@ export class GameScene extends AggregateRoot {
     id: string,
     gameId: number,
     name: string,
-    stageJSON: object,
+    stageJSON: KonvaNode,
     stageWidth: number,
     stageHeight: number,
     backgroundColor: string,
@@ -35,7 +54,7 @@ export class GameScene extends AggregateRoot {
     this.id = id;
     this.gameId = gameId;
     this.name = name;
-    this.stageJSON = stageJSON || { layers: [] };
+    this.stageJSON = stageJSON || { className: 'Stage', children: [] };
     this.stageWidth = stageWidth;
     this.stageHeight = stageHeight;
     this.backgroundColor = backgroundColor;
@@ -173,42 +192,48 @@ export class GameScene extends AggregateRoot {
     // this.stageJSON.layers = this.stageJSON.layers.filter((l: any) => l.id !== id);
   }
 
-  addObject(layerId: string, objectId: string, payload: any): void {
-    // const stageLayer = this.stageJSON.layers.find((l: any) => l.id === layerId);
-    // if (!stageLayer) throw new Error('Layer not found in stageJSON');
-    //
-    // if (!stageLayer.objects) stageLayer.objects = [];
-    // if (stageLayer.objects.find((o: any) => o.id === objectId)) {
-    //   throw new Error('Object ID already exists');
-    // }
-    //
-    // stageLayer.objects.push({ ...payload, id: objectId });
-    //
-    // this.apply(new SceneObjectAddedEvent(this.id, layerId, objectId, payload, new Date()));
+  addObject(layerId: string, payload: KonvaNode[]): void {
+    const stageLayer = this.stageJSON.children.find((l: KonvaNode) => l.attrs.id === layerId);
+    if (!stageLayer) throw new Error('Layer not found in stageJSON');
+
+    if (!stageLayer.children) stageLayer.children = [];
+
+    const objectsToAddIds = payload.map((object) => object.attrs.id);
+    if (stageLayer.children.find((o: KonvaNode) => objectsToAddIds.includes(o.attrs.id))) {
+      throw new Error('Object ID already exists');
+    }
+
+    stageLayer.children = [...stageLayer.children, ...payload];
+
+    this.apply(new SceneObjectAddedEvent(this.id, layerId, payload, new Date()));
   }
 
-  modifyObject(layerId: string, objectId: string, payload: any): void {
-    // const stageLayer = this.stageJSON.layers.find((l: any) => l.id === layerId);
-    // if (!stageLayer) throw new Error('Layer not found in stageJSON');
-    //
-    // const objectIndex = stageLayer.objects.findIndex((o: any) => o.id === objectId);
-    // if (objectIndex === -1) throw new Error('Object not found in layer');
-    //
-    // stageLayer.objects[objectIndex] = { ...stageLayer.objects[objectIndex], ...payload, id: objectId };
-    //
-    // this.apply(new SceneObjectModifiedEvent(this.id, layerId, objectId, payload, new Date()));
+  modifyObject(layerId: string, payload: KonvaNode[]): void {
+    const stageLayer = this.stageJSON.children.find((l: KonvaNode) => l.attrs.id === layerId);
+    if (!stageLayer) throw new Error('Layer not found in stageJSON');
+
+    payload.forEach((node) => {
+      const objectIndex = stageLayer.children.findIndex((o: KonvaNode) => o.attrs.id === node.attrs.id);
+      if (objectIndex === -1) throw new Error('Object not found in layer');
+
+      stageLayer.children[objectIndex] = { ...stageLayer.children[objectIndex], ...node };
+
+      this.apply(new SceneObjectModifiedEvent(this.id, layerId, node.attrs.id, node, new Date()));
+    });
   }
 
-  deleteObject(layerId: string, objectId: string): void {
-    // const stageLayer = this.stageJSON.layers.find((l: any) => l.id === layerId);
-    // if (!stageLayer) throw new Error('Layer not found in stageJSON');
-    //
-    // const objectIndex = stageLayer.objects.findIndex((o: any) => o.id === objectId);
-    // if (objectIndex === -1) throw new Error('Object not found in layer');
-    //
-    // stageLayer.objects.splice(objectIndex, 1);
-    //
-    // this.apply(new SceneObjectDeletedEvent(this.id, layerId, objectId, new Date()));
+  deleteObject(layerId: string, payload: KonvaNode[]): void {
+    const stageLayer = this.stageJSON.children.find((l: KonvaNode) => l.attrs.id === layerId);
+    if (!stageLayer) throw new Error('Layer not found in stageJSON');
+
+    payload.forEach((node) => {
+      const objectIndex = stageLayer.children.findIndex((o: KonvaNode) => o.attrs.id === node.attrs.id);
+      if (objectIndex === -1) throw new Error('Object not found in layer');
+
+      stageLayer.children.splice(objectIndex, 1);
+
+      this.apply(new SceneObjectDeletedEvent(this.id, layerId, node.attrs.id, new Date()));
+    });
   }
 
   // Getters

@@ -4,7 +4,6 @@ export class SceneObjectAddedEvent extends IKafkaEvent {
   constructor(
     public readonly sceneId: string,
     public readonly layerId: string,
-    public readonly objectId: string,
     public readonly payload: any,
     public readonly occurredAt: Date,
   ) {

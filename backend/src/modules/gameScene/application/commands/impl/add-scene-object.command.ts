@@ -8,7 +8,6 @@ export class AddSceneObjectCommand extends IKafkaCommand {
     public readonly objectId: string,
     public readonly payload: any,
   ) {
-    console.log(payload);
     super('game-scene.command.add-object');
   }
 }

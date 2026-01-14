@@ -12,9 +12,10 @@ import { AddSceneObjectCommand } from '../../application/commands/impl/add-scene
 import { ModifySceneObjectCommand } from '../../application/commands/impl/modify-scene-object.command';
 import { DeleteSceneObjectCommand } from '../../application/commands/impl/delete-scene-object.command';
 import { CommandBus } from '@nestjs/cqrs';
+import { KonvaNode } from '../../domain/aggregates/game-scene.aggregate';
 
 @WebSocketGateway({
-  namespace: '/ws/game-scenes',
+  namespace: '/game-scene',
   cors: {
     origin: '*',
   },
@@ -54,27 +55,29 @@ export class GameSceneGateway implements OnGatewayConnection, OnGatewayDisconnec
 
   @SubscribeMessage('modifyObject')
   async handleModifyObject(
-    @MessageBody() data: { sceneId: string; layerId: string; objectId: string; payload: any },
+    @MessageBody() data: { sceneId: string; layerId: string; payload: KonvaNode[] },
     @ConnectedSocket() client: Socket,
   ) {
-    await this.commandBus.execute(new ModifySceneObjectCommand(data.sceneId, data.layerId, data.objectId, data.payload));
+    await this.commandBus.execute(new ModifySceneObjectCommand(data.sceneId, data.layerId, data.payload));
 
     client.to(data.sceneId).emit('objectModified', {
       sceneId: data.sceneId,
       layerId: data.layerId,
-      objectId: data.objectId,
       payload: data.payload,
     });
   }
 
   @SubscribeMessage('deleteObject')
-  async handleDeleteObject(@MessageBody() data: { sceneId: string; layerId: string; objectId: string }, @ConnectedSocket() client: Socket) {
-    await this.commandBus.execute(new DeleteSceneObjectCommand(data.sceneId, data.layerId, data.objectId));
+  async handleDeleteObject(
+    @MessageBody() data: { sceneId: string; layerId: string; payload: KonvaNode[] },
+    @ConnectedSocket() client: Socket,
+  ) {
+    await this.commandBus.execute(new DeleteSceneObjectCommand(data.sceneId, data.layerId, data.payload));
 
     client.to(data.sceneId).emit('objectDeleted', {
       sceneId: data.sceneId,
       layerId: data.layerId,
-      objectId: data.objectId,
+      objectIds: data.payload,
     });
   }
 }

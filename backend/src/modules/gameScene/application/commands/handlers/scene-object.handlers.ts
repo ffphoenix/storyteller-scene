@@ -17,8 +17,7 @@ export class AddSceneObjectHandler implements ICommandHandler<AddSceneObjectComm
     if (!gameScene) throw new NotFoundException('Game scene not found');
 
     const aggregate = this.publisher.mergeObjectContext(gameScene);
-    aggregate.addObject(command.layerId, command.objectId, command.payload);
-
+    aggregate.addObject(command.layerId, command.payload);
     await this.repository.save(aggregate);
     aggregate.commit();
   }
@@ -36,7 +35,7 @@ export class ModifySceneObjectHandler implements ICommandHandler<ModifySceneObje
     if (!gameScene) throw new NotFoundException('Game scene not found');
 
     const aggregate = this.publisher.mergeObjectContext(gameScene);
-    aggregate.modifyObject(command.layerId, command.objectId, command.payload);
+    aggregate.modifyObject(command.layerId, command.payload);
 
     await this.repository.save(aggregate);
     aggregate.commit();
@@ -55,7 +54,7 @@ export class DeleteSceneObjectHandler implements ICommandHandler<DeleteSceneObje
     if (!gameScene) throw new NotFoundException('Game scene not found');
 
     const aggregate = this.publisher.mergeObjectContext(gameScene);
-    aggregate.deleteObject(command.layerId, command.objectId);
+    aggregate.deleteObject(command.layerId, command.payload);
 
     await this.repository.save(aggregate);
     aggregate.commit();

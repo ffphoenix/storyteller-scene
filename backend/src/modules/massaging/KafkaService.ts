@@ -69,7 +69,6 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   async subscribe(groupId: string, topics: string[], onMessage: EachMessageHandler) {
     const consumer = this.kafka.consumer({ groupId });
     await consumer.connect();
-    console.log('consumer connected', topics);
     for (const topic of topics) {
       await consumer.subscribe({ topic, fromBeginning: false });
     }

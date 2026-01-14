@@ -9,7 +9,6 @@ class KafkaEventPublisher implements IEventPublisher {
   }
 
   publish<TEvent extends IEvent>(event: TEvent) {
-    console.log('Publishing event:', event);
     const topic = event.constructor.name;
     const messages = [{ value: JSON.stringify(event) }];
     return this.kafkaProducer.send({ topic, messages });
@@ -23,7 +22,6 @@ class KafkaEventPublisher implements IEventPublisher {
       const messagesInTopic = messages.get(topic) || [];
       messages.set(topic, [...messagesInTopic, { value: JSON.stringify(event) }]);
     });
-    console.log('Publishing events:', messages);
     messages.forEach((messages, topic) => this.kafkaProducer.send({ topic, messages }));
   }
 }
