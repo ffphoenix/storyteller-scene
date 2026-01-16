@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IGameSceneRepository } from '../../../../domain/repositories/game-scene.repository.interface';
-import { GameScene, KonvaNode } from '../../../../domain/aggregates/game-scene.aggregate';
-import { GameSceneEntity } from '../entities/game-scene.entity';
-import { GameSceneLayerEntity } from '../entities/game-scene-layer.entity';
-import { GameSceneLayer } from '../../../../domain/entities/game-scene-layer.entity';
+import { IGameSceneRepository } from '../../../../domain/repositories/gameScene.repository.interface';
+import { GameScene, KonvaNode } from '../../../../domain/aggregates/gameScene.aggregate';
+import { GameSceneEntity } from '../entities/gameScene.entity';
+import { GameSceneLayerEntity } from '../entities/gameSceneLayer.entity';
+import { GameSceneLayer } from '../../../../domain/entities/gameSceneLayer.entity';
 
 @Injectable()
 export class GameSceneRepository implements IGameSceneRepository {

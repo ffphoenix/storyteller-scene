@@ -1,21 +1,21 @@
 import { Controller, Post, Body, Get, Param, Patch, Delete, Query, UseGuards, HttpStatus } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { CreateGameSceneDto, UpdateGameSceneDto, CreateSceneLayerDto, UpdateSceneLayerDto } from './dtos/game-scene.dtos';
-import { CreateGameSceneCommand } from '../../application/commands/impl/create-game-scene.command';
-import { UpdateGameSceneCommand } from '../../application/commands/impl/update-game-scene.command';
-import { DeleteGameSceneCommand } from '../../application/commands/impl/delete-game-scene.command';
-import { CreateSceneLayerCommand } from '../../application/commands/impl/create-scene-layer.command';
-import { UpdateSceneLayerCommand } from '../../application/commands/impl/update-scene-layer.command';
-import { DeleteSceneLayerCommand } from '../../application/commands/impl/delete-scene-layer.command';
+import { CreateGameSceneDto, UpdateGameSceneDto, CreateSceneLayerDto, UpdateSceneLayerDto } from './dtos/gameScene.dtos';
+import { CreateGameSceneCommand } from '../../application/commands/impl/createGameScene.command';
+import { UpdateGameSceneCommand } from '../../application/commands/impl/updateGameScene.command';
+import { DeleteGameSceneCommand } from '../../application/commands/impl/deleteGameScene.command';
+import { CreateSceneLayerCommand } from '../../application/commands/impl/createSceneLayer.command';
+import { UpdateSceneLayerCommand } from '../../application/commands/impl/updateSceneLayer.command';
+import { DeleteSceneLayerCommand } from '../../application/commands/impl/deleteSceneLayer.command';
 import {
   GetGameScenesQuery,
   GetGameSceneByIdQuery,
   GetSceneLayersQuery,
   GetActiveGameSceneByGameIdQuery,
-} from '../../application/queries/impl/game-scene.queries';
-import { JwtAuthGuard } from '../../../account/auth/guards/jwt-auth.guard';
-import { GameSceneEntity } from '../../infrastructure/persistence/typeorm/entities/game-scene.entity';
+} from '../../application/queries/impl/gameScene.queries';
+import { JwtAuthGuard } from '../../../account/auth/guards/jwtAuth.guard';
+import { GameSceneEntity } from '../../infrastructure/persistence/typeorm/entities/gameScene.entity';
 
 @ApiTags('game-scenes')
 @ApiBearerAuth()

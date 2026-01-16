@@ -8,7 +8,7 @@ import { UsersModule } from './modules/account/users/users.module';
 import { AuthModule } from './modules/account/auth/auth.module';
 import { GameModule } from './modules/game/game.module';
 import { MessagingModule } from './modules/massaging/messaging.module';
-import { GameSceneModule } from './modules/gameScene/game-scene.module';
+import { GameSceneModule } from './modules/gameScene/gameScene.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import KafkaEventPublisher from './modules/massaging/KafkaEventPublisher';
 import KafkaCommandPublisher from './modules/massaging/KafkaCommandPublisher';

@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/user.entity';
 import { OAuth2Client } from 'google-auth-library';
-import { TokenPayload } from './interfaces/token-payload.interface';
+import { TokenPayload } from './interfaces/tokenPayload.interface';
 import { type StringValue } from 'ms';
 
 type GoogleProfile = {

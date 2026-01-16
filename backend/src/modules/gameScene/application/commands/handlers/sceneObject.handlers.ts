@@ -1,65 +1,60 @@
 import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { CreateSceneLayerCommand } from '../impl/create-scene-layer.command';
-import { UpdateSceneLayerCommand } from '../impl/update-scene-layer.command';
-import { DeleteSceneLayerCommand } from '../impl/delete-scene-layer.command';
-import { IGameSceneRepository } from '../../../domain/repositories/game-scene.repository.interface';
+import { AddSceneObjectCommand } from '../impl/addSceneObject.command';
+import { ModifySceneObjectCommand } from '../impl/modifySceneObject.command';
+import { DeleteSceneObjectCommand } from '../impl/deleteSceneObject.command';
+import { IGameSceneRepository } from '../../../domain/repositories/gameScene.repository.interface';
 
-@CommandHandler(CreateSceneLayerCommand)
-export class CreateSceneLayerHandler implements ICommandHandler<CreateSceneLayerCommand> {
+@CommandHandler(AddSceneObjectCommand)
+export class AddSceneObjectHandler implements ICommandHandler<AddSceneObjectCommand> {
   constructor(
     @Inject(IGameSceneRepository) private readonly repository: IGameSceneRepository,
     private readonly publisher: EventPublisher,
   ) {}
 
-  async execute(command: CreateSceneLayerCommand) {
+  async execute(command: AddSceneObjectCommand) {
     const gameScene = await this.repository.findById(command.sceneId);
     if (!gameScene) throw new NotFoundException('Game scene not found');
 
     const aggregate = this.publisher.mergeObjectContext(gameScene);
-    const layerId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11);
-
-    aggregate.addLayer(layerId, command.name, command.isLocked, command.isVisible);
-
+    aggregate.addObject(command.layerId, command.payload);
     await this.repository.save(aggregate);
     aggregate.commit();
-
-    return layerId;
   }
 }
 
-@CommandHandler(UpdateSceneLayerCommand)
-export class UpdateSceneLayerHandler implements ICommandHandler<UpdateSceneLayerCommand> {
+@CommandHandler(ModifySceneObjectCommand)
+export class ModifySceneObjectHandler implements ICommandHandler<ModifySceneObjectCommand> {
   constructor(
     @Inject(IGameSceneRepository) private readonly repository: IGameSceneRepository,
     private readonly publisher: EventPublisher,
   ) {}
 
-  async execute(command: UpdateSceneLayerCommand) {
+  async execute(command: ModifySceneObjectCommand) {
     const gameScene = await this.repository.findById(command.sceneId);
     if (!gameScene) throw new NotFoundException('Game scene not found');
 
     const aggregate = this.publisher.mergeObjectContext(gameScene);
-    aggregate.updateLayer(command.layerId, command.name, command.isLocked, command.isVisible);
+    aggregate.modifyObject(command.layerId, command.payload);
 
     await this.repository.save(aggregate);
     aggregate.commit();
   }
 }
 
-@CommandHandler(DeleteSceneLayerCommand)
-export class DeleteSceneLayerHandler implements ICommandHandler<DeleteSceneLayerCommand> {
+@CommandHandler(DeleteSceneObjectCommand)
+export class DeleteSceneObjectHandler implements ICommandHandler<DeleteSceneObjectCommand> {
   constructor(
     @Inject(IGameSceneRepository) private readonly repository: IGameSceneRepository,
     private readonly publisher: EventPublisher,
   ) {}
 
-  async execute(command: DeleteSceneLayerCommand) {
+  async execute(command: DeleteSceneObjectCommand) {
     const gameScene = await this.repository.findById(command.sceneId);
     if (!gameScene) throw new NotFoundException('Game scene not found');
 
     const aggregate = this.publisher.mergeObjectContext(gameScene);
-    aggregate.deleteLayer(command.layerId);
+    aggregate.deleteObject(command.layerId, command.payload);
 
     await this.repository.save(aggregate);
     aggregate.commit();

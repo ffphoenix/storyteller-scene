@@ -1,10 +1,10 @@
 import { IKafkaCommand } from '../../../../../common/interfaces/messaging.interfaces';
-import { GridMetricSystem, GridType } from '../../../domain/aggregates/game-scene.types';
+import { GridMetricSystem, GridType } from '../../../domain/aggregates/gameScene.types';
 
-export class UpdateGameSceneCommand extends IKafkaCommand {
+export class CreateGameSceneCommand extends IKafkaCommand {
   constructor(
-    public readonly id: string,
-    public readonly name?: string,
+    public readonly gameId: number,
+    public readonly name: string,
     public readonly stageWidth?: number,
     public readonly stageHeight?: number,
     public readonly backgroundColor?: string,
@@ -13,6 +13,6 @@ export class UpdateGameSceneCommand extends IKafkaCommand {
     public readonly gridMetricSystem?: GridMetricSystem,
     public readonly isActive?: boolean,
   ) {
-    super('game-scene.command.update-scene');
+    super('game-scene.command.create-scene');
   }
 }

@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { CreateGameSceneCommand } from '../impl/create-game-scene.command';
-import { UpdateGameSceneCommand } from '../impl/update-game-scene.command';
-import { DeleteGameSceneCommand } from '../impl/delete-game-scene.command';
-import { IGameSceneRepository } from '../../../domain/repositories/game-scene.repository.interface';
-import { GameScene } from '../../../domain/aggregates/game-scene.aggregate';
+import { CreateGameSceneCommand } from '../impl/createGameScene.command';
+import { UpdateGameSceneCommand } from '../impl/updateGameScene.command';
+import { DeleteGameSceneCommand } from '../impl/deleteGameScene.command';
+import { IGameSceneRepository } from '../../../domain/repositories/gameScene.repository.interface';
+import { GameScene } from '../../../domain/aggregates/gameScene.aggregate';
 
 @CommandHandler(CreateGameSceneCommand)
 export class CreateGameSceneHandler implements ICommandHandler<CreateGameSceneCommand> {

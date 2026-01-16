@@ -1,5 +1,5 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { GameSceneEntity } from './game-scene.entity';
+import { GameSceneEntity } from './gameScene.entity';
 
 @Entity('game_scene_layers')
 export class GameSceneLayerEntity {

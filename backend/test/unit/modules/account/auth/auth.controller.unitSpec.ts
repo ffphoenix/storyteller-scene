@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '../../../../../src/modules/account/auth/auth.controller';
 import { AuthService } from '../../../../../src/modules/account/auth/auth.service';
-import { GoogleLoginDto } from '../../../../../src/modules/account/auth/dto/google-login.dto';
+import { GoogleLoginDto } from '../../../../../src/modules/account/auth/dto/googleLogin.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
 import { User } from '../../../../../src/modules/account/users/user.entity';

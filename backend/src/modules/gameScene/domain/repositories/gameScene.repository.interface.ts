@@ -1,4 +1,4 @@
-import { GameScene } from '../aggregates/game-scene.aggregate';
+import { GameScene } from '../aggregates/gameScene.aggregate';
 
 export interface IGameSceneRepository {
   findById(id: string): Promise<GameScene | null>;

@@ -5,8 +5,8 @@ import {
   GetGameSceneByIdQuery,
   GetSceneLayersQuery,
   GetActiveGameSceneByGameIdQuery,
-} from '../impl/game-scene.queries';
-import { IGameSceneRepository } from '../../../domain/repositories/game-scene.repository.interface';
+} from '../impl/gameScene.queries';
+import { IGameSceneRepository } from '../../../domain/repositories/gameScene.repository.interface';
 
 @QueryHandler(GetGameScenesQuery)
 export class GetGameScenesHandler implements IQueryHandler<GetGameScenesQuery> {

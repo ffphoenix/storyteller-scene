@@ -8,11 +8,11 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { AddSceneObjectCommand } from '../../application/commands/impl/add-scene-object.command';
-import { ModifySceneObjectCommand } from '../../application/commands/impl/modify-scene-object.command';
-import { DeleteSceneObjectCommand } from '../../application/commands/impl/delete-scene-object.command';
+import { AddSceneObjectCommand } from '../../application/commands/impl/addSceneObject.command';
+import { ModifySceneObjectCommand } from '../../application/commands/impl/modifySceneObject.command';
+import { DeleteSceneObjectCommand } from '../../application/commands/impl/deleteSceneObject.command';
 import { CommandBus } from '@nestjs/cqrs';
-import { KonvaNode } from '../../domain/aggregates/game-scene.aggregate';
+import { KonvaNode } from '../../domain/aggregates/gameScene.aggregate';
 
 @WebSocketGateway({
   namespace: '/game-scene',

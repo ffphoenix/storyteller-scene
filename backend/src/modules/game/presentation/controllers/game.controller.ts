@@ -2,12 +2,12 @@ import { Controller, Post, Body, Put, Param, Delete, Get, UseGuards, HttpStatus 
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateGameDto, UpdateGameDto, GameResponseDto } from '../dto/game.dto';
-import { CreateGameCommand } from '../../application/commands/impl/create-game.command';
-import { ModifyGameCommand } from '../../application/commands/impl/modify-game.command';
-import { StartGameCommand } from '../../application/commands/impl/start-game.command';
-import { DeleteGameCommand } from '../../application/commands/impl/delete-game.command';
+import { CreateGameCommand } from '../../application/commands/impl/createGame.command';
+import { ModifyGameCommand } from '../../application/commands/impl/modifyGame.command';
+import { StartGameCommand } from '../../application/commands/impl/startGame.command';
+import { DeleteGameCommand } from '../../application/commands/impl/deleteGame.command';
 import { GetMyGamesQuery, GetGameDataQuery } from '../../application/queries/game.queries';
-import { JwtAuthGuard } from '../../../account/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../account/auth/guards/jwtAuth.guard';
 import { CurrentUser } from '../../../../common/decorators/user.decorator';
 import { User } from '../../../account/users/user.entity';
 import { CRUDErrorBadRequestResponse } from '../../../../common/interfaces/formValidationExceptionResponse.interface';

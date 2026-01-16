@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { GameStatus } from '../../../domain/aggregates/game-status.enum';
+import { GameStatus } from '../../../domain/aggregates/gameStatus.enum';
 
 @Entity('games')
 export class GameEntity {

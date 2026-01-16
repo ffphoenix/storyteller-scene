@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum, Min } from 'class-validator';
-import { GridMetricSystem, GridType } from '../../../domain/aggregates/game-scene.types';
+import { GridMetricSystem, GridType } from '../../../domain/aggregates/gameScene.types';
 
 export class CreateGameSceneDto {
   @ApiProperty()

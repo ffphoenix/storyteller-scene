@@ -2,12 +2,12 @@ import { Controller, Post, Body, HttpStatus, HttpException, UseGuards, Req } fro
 import { AuthService } from './auth.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ErrorResponse } from '../../../common/interfaces/errorResponse.interface';
-import { GoogleLoginDto } from './dto/google-login.dto';
+import { GoogleLoginDto } from './dto/googleLogin.dto';
 import { Request } from 'express';
-import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
 import { Public } from '../../../common/decorators/public.decorator';
-import { JwtTokensResponse } from './interfaces/jwt-tokens-response.interface';
-import { RefreshTokenPayloadInterface } from './interfaces/refresh-token-payload.interface';
+import { JwtTokensResponse } from './interfaces/jwtTokensResponse.interface';
+import { RefreshTokenPayloadInterface } from './interfaces/refreshTokenPayload.interface';
 
 @ApiTags('auth')
 @Controller('auth')

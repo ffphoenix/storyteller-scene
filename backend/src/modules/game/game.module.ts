@@ -9,8 +9,8 @@ import {
   ModifyGameHandler,
   StartGameHandler,
   DeleteGameHandler,
-} from './application/commands/handlers/game-command.handlers';
-import { GetMyGamesHandler, GetGameDataHandler } from './application/queries/handlers/game-query.handlers';
+} from './application/commands/handlers/gameCommand.handlers';
+import { GetMyGamesHandler, GetGameDataHandler } from './application/queries/handlers/gameQuery.handlers';
 import GameCommands from './application/commands/impl/game.commands';
 import { GameCreatedEvent, GameDeletedEvent, GameModifiedEvent, GameStartedEvent } from './domain/events/game.events';
 import { MessagesRegistry } from '../massaging/MessagesRegistry';

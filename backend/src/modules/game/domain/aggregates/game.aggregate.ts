@@ -1,5 +1,5 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { GameStatus } from './game-status.enum';
+import { GameStatus } from './gameStatus.enum';
 import { GameCreatedEvent, GameDeletedEvent, GameModifiedEvent, GameStartedEvent } from '../events/game.events';
 
 export class Game extends AggregateRoot {

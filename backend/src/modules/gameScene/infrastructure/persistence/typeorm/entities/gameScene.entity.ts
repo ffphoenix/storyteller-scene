@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, ForeignKey } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { GameSceneLayerEntity } from './game-scene-layer.entity';
-import { GridMetricSystem, GridType } from '../../../../domain/aggregates/game-scene.types';
+import { GameSceneLayerEntity } from './gameSceneLayer.entity';
+import { GridMetricSystem, GridType } from '../../../../domain/aggregates/gameScene.types';
 import { GameEntity } from '../../../../../game/infrastructure/persistence/entities/game.entity';
 
 @Entity('game_scenes')

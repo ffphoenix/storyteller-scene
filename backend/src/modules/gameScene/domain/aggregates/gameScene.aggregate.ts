@@ -1,7 +1,7 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { GameSceneLayer } from '../entities/game-scene-layer.entity';
-import { GridMetricSystem, GridType } from './game-scene.types';
-import { SceneObjectAddedEvent, SceneObjectModifiedEvent, SceneObjectDeletedEvent } from '../events/scene-object.events';
+import { GameSceneLayer } from '../entities/gameSceneLayer.entity';
+import { GridMetricSystem, GridType } from './gameScene.types';
+import { SceneObjectAddedEvent, SceneObjectModifiedEvent, SceneObjectDeletedEvent } from '../events/sceneObject.events';
 
 export type KonvaNode = {
   className: string;

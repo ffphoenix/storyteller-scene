@@ -16,11 +16,11 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/createUser.dto';
+import { UpdateUserDto } from './dto/updateUser.dto';
 import { ApiResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ErrorResponse } from '../../../common/interfaces/errorResponse.interface';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { CurrentUser } from '../../../common/decorators/user.decorator';
 
 @ApiTags('users')
