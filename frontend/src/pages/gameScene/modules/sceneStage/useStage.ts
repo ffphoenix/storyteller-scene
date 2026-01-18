@@ -12,7 +12,6 @@ const initStage = (container: HTMLDivElement) => {
   const stage = Konva.Node.create(stageJSON, container);
   stage.width(container.clientWidth);
   stage.height(container.clientHeight);
-
   const gridLayer = new Konva.Layer({
     id: "grid-layer",
     listening: false,

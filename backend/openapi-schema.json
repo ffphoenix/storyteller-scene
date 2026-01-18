@@ -1260,6 +1260,9 @@
       "User": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "number"
+          },
           "email": {
             "type": "string"
           },
@@ -1296,6 +1299,7 @@
           }
         },
         "required": [
+          "id",
           "email",
           "role"
         ]

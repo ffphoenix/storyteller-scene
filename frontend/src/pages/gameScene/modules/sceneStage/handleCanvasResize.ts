@@ -6,7 +6,7 @@ export default (stage: MutableRefObject<Stage | null>, containerRef: MutableRefO
   const { clientWidth, clientHeight } = containerRef.current;
   const height = Math.max(clientHeight, window.innerHeight);
   const width = Math.max(clientWidth, 800);
-
+  console.log("handleCanvasResize", width, height);
   stage.current.width(width);
-  stage.current.height(height);
+  stage.current.height(height - 220);
 };

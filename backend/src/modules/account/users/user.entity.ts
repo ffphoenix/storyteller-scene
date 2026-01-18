@@ -7,6 +7,7 @@ export type UserRole = 'admin' | 'user';
 
 @Entity()
 export class User {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
 

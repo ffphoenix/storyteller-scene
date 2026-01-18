@@ -45,6 +45,7 @@ export interface CreateUserDto {
 }
 
 export interface User {
+  id: number;
   email: string;
   password?: string;
   firstName?: string;
@@ -231,6 +232,40 @@ export interface UpdateSceneLayerDto {
   name?: string;
   isLocked?: boolean;
   isVisible?: boolean;
+}
+
+export interface CreateGameHistoryItemDto {
+  /** @example "DICE_ROLL" */
+  type: "DICE_ROLL" | "CHAT_MESSAGE" | "SYSTEM" | "ACTION";
+  /** @example "user-123" */
+  userId: string;
+  /** @example {"x":10,"y":20} */
+  body: object;
+}
+
+export interface GameHistoryDto {
+  /** @example "550e8400-e29b-41d4-a716-446655440000" */
+  id: string;
+  type: "DICE_ROLL" | "CHAT_MESSAGE" | "SYSTEM" | "ACTION";
+  /** @example "user-123" */
+  userId: string;
+  /** @example 1 */
+  gameId: number;
+  body: object;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  deletedAt?: string;
+}
+
+export interface PaginatedGameHistoryDto {
+  items: GameHistoryDto[];
+  /** @example 100 */
+  total: number;
+  /** @example 1 */
+  page: number;
+  /** @example 20 */
+  limit: number;
 }
 
 import type {
@@ -898,6 +933,87 @@ export class Api<
         path: `/api/game-scenes/${sceneId}/layers/${layerId}`,
         method: "DELETE",
         secure: true,
+        ...params,
+      }),
+  };
+  gameHistory = {
+    /**
+     * No description
+     *
+     * @tags GameHistory
+     * @name Create
+     * @summary Create a new game history item
+     * @request POST:/api/games/{gameId}/history
+     */
+    create: (
+      gameId: number,
+      data: CreateGameHistoryItemDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<GameHistoryDto, any>({
+        path: `/api/games/${gameId}/history`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags GameHistory
+     * @name GetForGame
+     * @summary Get history items for a game
+     * @request GET:/api/games/{gameId}/history
+     */
+    getForGame: (
+      gameId: number,
+      query?: {
+        page?: number;
+        limit?: number;
+        type?: string;
+        userId?: string;
+        includeDeleted?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<PaginatedGameHistoryDto, any>({
+        path: `/api/games/${gameId}/history`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags GameHistory
+     * @name GetById
+     * @summary Get a single history item by ID
+     * @request GET:/api/history/{id}
+     */
+    getById: (id: string, params: RequestParams = {}) =>
+      this.request<GameHistoryDto, any>({
+        path: `/api/history/${id}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags GameHistory
+     * @name Delete
+     * @summary Soft-delete a history item
+     * @request DELETE:/api/history/{id}
+     */
+    delete: (id: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/history/${id}`,
+        method: "DELETE",
         ...params,
       }),
   };
