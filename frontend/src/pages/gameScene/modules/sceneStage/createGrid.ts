@@ -28,13 +28,7 @@ const convertCanvasToImage = (canvas: HTMLCanvasElement) => {
   return image;
 };
 
-const createGridLayer = () => {
-  const layer = new Konva.Layer({
-    id: "grid-layer",
-    listening: false,
-  });
-
-  // const pattern
+const createGrid = (layer: Konva.Layer) => {
   const canvasPattern = convertCanvasToImage(createCanvasGrid(70));
 
   const gridRect = new Konva.Rect({
@@ -46,14 +40,14 @@ const createGridLayer = () => {
     fillPatternRepeat: "repeat",
     listening: false,
   });
-  console.log(gridRect.toJSON());
+  console.log("grid-=_+_", gridRect.toJSON());
   gridRect.width(50 * 70);
   gridRect.height(50 * 70);
-  gridRect.cache();
-  layer.add(gridRect);
-  layer.draw();
+  gridRect.moveTo(layer);
+  // TODO: find out why cache doesn't work
+  // gridRect.cache();
 
-  return layer;
+  return gridRect;
 };
 
-export default createGridLayer;
+export default createGrid;

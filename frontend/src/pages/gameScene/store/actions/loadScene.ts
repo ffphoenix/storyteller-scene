@@ -1,20 +1,12 @@
 import ApiClient from "../../../../utils/apiClient";
-import { runInAction } from "mobx";
-import sceneStore, { type SceneLayer } from "../SceneStore";
+import sceneStore from "../SceneStore";
 
-export default function loadScene(shortURL: string) {
-  ApiClient.games.findOne(shortURL).then((response) => {
-    runInAction(() => {
-      const game = response.data;
-      ApiClient.gameScenes.findActive(game.id.toString()).then((sceneResponse) => {
-        const scene = sceneResponse.data;
-
-        sceneStore.activeSceneId = scene.id;
-        sceneStore.stageJSON = scene.stageJSON;
-        const sceneLayers = scene.layers as SceneLayer[];
-        sceneStore.layers.list = sceneLayers;
-        sceneStore.layers.activeLayerId = sceneLayers[0]?.id;
-      });
-    });
-  });
+export default async function loadScene(shortURL: string) {
+  try {
+    const game = (await ApiClient.games.findOne(shortURL)).data;
+    const scene = (await ApiClient.gameScenes.findActive(game.id.toString())).data;
+    sceneStore.updateSceneData(scene);
+  } catch (e) {
+    console.error(e);
+  }
 }

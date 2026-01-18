@@ -16,7 +16,7 @@ const getSelectHandlers = (stage: Stage): MouseHandlers => {
   const activeLayer = getActiveLayer(stage);
   const transformer = getTransformer(stage);
   if (activeLayer) {
-    activeLayer.add(transformer);
+    transformer.moveTo(activeLayer);
     transformer.moveToTop();
     drawActiveLayer(stage);
   }

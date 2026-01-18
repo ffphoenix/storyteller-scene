@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import type { GameSceneEntity } from "../../../../generated/api";
 
 export type SceneLayer = {
   id: string;
@@ -11,7 +12,7 @@ export type Tool = "select" | "pencil" | "rect" | "circle" | "arrow" | "text" | 
 
 type SceneStore = {
   activeSceneId: string;
-  stageJSON: object;
+  stageJSON: object | null;
   layers: {
     activeLayerId: string;
     list: SceneLayer[];
@@ -74,11 +75,12 @@ type SceneStore = {
   setRightClickStartPos: (pos: { x: number; y: number }) => void;
   setRightClickIsRightButtonDown: (isRightButtonDown: boolean) => void;
   setActiveLayer: (layerId: string) => void;
+  updateSceneData: (sceneData: GameSceneEntity) => void;
 };
 
 const sceneStore: SceneStore = makeAutoObservable<SceneStore>({
   activeSceneId: "",
-  stageJSON: {},
+  stageJSON: null,
   UI: {
     currentZoom: 100,
     rightClick: {
@@ -159,6 +161,13 @@ const sceneStore: SceneStore = makeAutoObservable<SceneStore>({
   setRightClickIsRightButtonDown: (isRightButtonDown: boolean) =>
     (sceneStore.UI.rightClick.isRightButtonDown = isRightButtonDown),
   setActiveLayer: (layerId: string) => (sceneStore.layers.activeLayerId = layerId),
+  updateSceneData: (sceneData: GameSceneEntity) => {
+    sceneStore.activeSceneId = sceneData.id;
+    sceneStore.stageJSON = sceneData.stageJSON;
+    const sceneLayers = sceneData.layers as SceneLayer[];
+    sceneStore.layers.list = sceneLayers;
+    sceneStore.layers.activeLayerId = sceneLayers[0]?.id;
+  },
 });
 
 export default sceneStore;

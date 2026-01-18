@@ -11,7 +11,7 @@ export const GameSceneRoute = {
       path: ":gameId",
       loader: async ({ params }) => {
         if (!params.gameId) return;
-        loadScene(params.gameId);
+        await loadScene(params.gameId);
       },
       Component: GameScenePage,
     } as RouteObject,
