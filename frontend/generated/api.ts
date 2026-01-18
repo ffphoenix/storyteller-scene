@@ -732,19 +732,23 @@ export class Api<
         ...params,
       }),
   };
-  gameScenes = {
+  gamesScenes = {
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name Create
      * @summary Create a new game scene
-     * @request POST:/api/game-scenes
+     * @request POST:/api/games/{gameId}/scenes
      * @secure
      */
-    create: (data: CreateGameSceneDto, params: RequestParams = {}) =>
+    create: (
+      gameId: string,
+      data: CreateGameSceneDto,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
-        path: `/api/game-scenes`,
+        path: `/api/games/${gameId}/scenes`,
         method: "POST",
         body: data,
         secure: true,
@@ -755,13 +759,14 @@ export class Api<
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name FindAll
      * @summary Get paginated list of game scenes
-     * @request GET:/api/game-scenes
+     * @request GET:/api/games/{gameId}/scenes
      * @secure
      */
     findAll: (
+      gameId: string,
       query: {
         page: number;
         limit: number;
@@ -769,7 +774,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/api/game-scenes`,
+        path: `/api/games/${gameId}/scenes`,
         method: "GET",
         query: query,
         secure: true,
@@ -779,15 +784,15 @@ export class Api<
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name FindOne
      * @summary Get full scene by id
-     * @request GET:/api/game-scenes/{id}
+     * @request GET:/api/games/{gameId}/scenes/{id}
      * @secure
      */
-    findOne: (id: string, params: RequestParams = {}) =>
+    findOne: (id: string, gameId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/game-scenes/${id}`,
+        path: `/api/games/${gameId}/scenes/${id}`,
         method: "GET",
         secure: true,
         ...params,
@@ -796,19 +801,20 @@ export class Api<
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name Update
      * @summary Update scene metadata and grid settings
-     * @request PATCH:/api/game-scenes/{id}
+     * @request PATCH:/api/games/{gameId}/scenes/{id}
      * @secure
      */
     update: (
       id: string,
+      gameId: string,
       data: UpdateGameSceneDto,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/api/game-scenes/${id}`,
+        path: `/api/games/${gameId}/scenes/${id}`,
         method: "PATCH",
         body: data,
         secure: true,
@@ -819,15 +825,15 @@ export class Api<
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name Delete
      * @summary Delete a scene
-     * @request DELETE:/api/game-scenes/{id}
+     * @request DELETE:/api/games/{gameId}/scenes/{id}
      * @secure
      */
-    delete: (id: string, params: RequestParams = {}) =>
+    delete: (id: string, gameId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/game-scenes/${id}`,
+        path: `/api/games/${gameId}/scenes/${id}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -836,15 +842,15 @@ export class Api<
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name FindActive
      * @summary Get active scene by game id
-     * @request GET:/api/game-scenes/active/{gameId}
+     * @request GET:/api/games/{gameId}/scenes/active
      * @secure
      */
     findActive: (gameId: string, params: RequestParams = {}) =>
       this.request<GameSceneEntity, any>({
-        path: `/api/game-scenes/active/${gameId}`,
+        path: `/api/games/${gameId}/scenes/active`,
         method: "GET",
         secure: true,
         format: "json",
@@ -854,19 +860,20 @@ export class Api<
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name CreateLayer
      * @summary Create a new layer in a scene
-     * @request POST:/api/game-scenes/{sceneId}/layers
+     * @request POST:/api/games/{gameId}/scenes/{sceneId}/layers
      * @secure
      */
     createLayer: (
       sceneId: string,
+      gameId: string,
       data: CreateSceneLayerDto,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/api/game-scenes/${sceneId}/layers`,
+        path: `/api/games/${gameId}/scenes/${sceneId}/layers`,
         method: "POST",
         body: data,
         secure: true,
@@ -877,15 +884,15 @@ export class Api<
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name FindLayers
      * @summary List layers for a scene
-     * @request GET:/api/game-scenes/{sceneId}/layers
+     * @request GET:/api/games/{gameId}/scenes/{sceneId}/layers
      * @secure
      */
-    findLayers: (sceneId: string, params: RequestParams = {}) =>
+    findLayers: (sceneId: string, gameId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/game-scenes/${sceneId}/layers`,
+        path: `/api/games/${gameId}/scenes/${sceneId}/layers`,
         method: "GET",
         secure: true,
         ...params,
@@ -894,20 +901,21 @@ export class Api<
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name UpdateLayer
      * @summary Update layer
-     * @request PATCH:/api/game-scenes/{sceneId}/layers/{layerId}
+     * @request PATCH:/api/games/{gameId}/scenes/{sceneId}/layers/{layerId}
      * @secure
      */
     updateLayer: (
       sceneId: string,
       layerId: string,
+      gameId: string,
       data: UpdateSceneLayerDto,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/api/game-scenes/${sceneId}/layers/${layerId}`,
+        path: `/api/games/${gameId}/scenes/${sceneId}/layers/${layerId}`,
         method: "PATCH",
         body: data,
         secure: true,
@@ -918,19 +926,20 @@ export class Api<
     /**
      * No description
      *
-     * @tags game-scenes
+     * @tags gamesScenes
      * @name DeleteLayer
      * @summary Delete layer
-     * @request DELETE:/api/game-scenes/{sceneId}/layers/{layerId}
+     * @request DELETE:/api/games/{gameId}/scenes/{sceneId}/layers/{layerId}
      * @secure
      */
     deleteLayer: (
       sceneId: string,
       layerId: string,
+      gameId: string,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/api/game-scenes/${sceneId}/layers/${layerId}`,
+        path: `/api/games/${gameId}/scenes/${sceneId}/layers/${layerId}`,
         method: "DELETE",
         secure: true,
         ...params,

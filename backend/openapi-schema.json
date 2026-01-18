@@ -683,7 +683,7 @@
         ]
       }
     },
-    "/api/game-scenes": {
+    "/api/games/{gameId}/scenes": {
       "post": {
         "operationId": "create",
         "parameters": [],
@@ -709,7 +709,7 @@
         ],
         "summary": "Create a new game scene",
         "tags": [
-          "game-scenes"
+          "gamesScenes"
         ]
       },
       "get": {
@@ -744,11 +744,47 @@
         ],
         "summary": "Get paginated list of game scenes",
         "tags": [
-          "game-scenes"
+          "gamesScenes"
         ]
       }
     },
-    "/api/game-scenes/{id}": {
+    "/api/games/{gameId}/scenes/active": {
+      "get": {
+        "operationId": "findActive",
+        "parameters": [
+          {
+            "name": "gameId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The active scene.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameSceneEntity"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get active scene by game id",
+        "tags": [
+          "gamesScenes"
+        ]
+      }
+    },
+    "/api/games/{gameId}/scenes/{id}": {
       "get": {
         "operationId": "findOne",
         "parameters": [
@@ -773,7 +809,7 @@
         ],
         "summary": "Get full scene by id",
         "tags": [
-          "game-scenes"
+          "gamesScenes"
         ]
       },
       "patch": {
@@ -810,7 +846,7 @@
         ],
         "summary": "Update scene metadata and grid settings",
         "tags": [
-          "game-scenes"
+          "gamesScenes"
         ]
       },
       "delete": {
@@ -837,47 +873,11 @@
         ],
         "summary": "Delete a scene",
         "tags": [
-          "game-scenes"
+          "gamesScenes"
         ]
       }
     },
-    "/api/game-scenes/active/{gameId}": {
-      "get": {
-        "operationId": "findActive",
-        "parameters": [
-          {
-            "name": "gameId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The active scene.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GameSceneEntity"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Get active scene by game id",
-        "tags": [
-          "game-scenes"
-        ]
-      }
-    },
-    "/api/game-scenes/{sceneId}/layers": {
+    "/api/games/{gameId}/scenes/{sceneId}/layers": {
       "post": {
         "operationId": "createLayer",
         "parameters": [
@@ -912,7 +912,7 @@
         ],
         "summary": "Create a new layer in a scene",
         "tags": [
-          "game-scenes"
+          "gamesScenes"
         ]
       },
       "get": {
@@ -939,11 +939,11 @@
         ],
         "summary": "List layers for a scene",
         "tags": [
-          "game-scenes"
+          "gamesScenes"
         ]
       }
     },
-    "/api/game-scenes/{sceneId}/layers/{layerId}": {
+    "/api/games/{gameId}/scenes/{sceneId}/layers/{layerId}": {
       "patch": {
         "operationId": "updateLayer",
         "parameters": [
@@ -986,7 +986,7 @@
         ],
         "summary": "Update layer",
         "tags": [
-          "game-scenes"
+          "gamesScenes"
         ]
       },
       "delete": {
@@ -1021,7 +1021,7 @@
         ],
         "summary": "Delete layer",
         "tags": [
-          "game-scenes"
+          "gamesScenes"
         ]
       }
     },

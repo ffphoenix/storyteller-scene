@@ -17,10 +17,10 @@ import {
 import { JwtAuthGuard } from '../../../account/auth/guards/jwtAuth.guard';
 import { GameSceneEntity } from '../../infrastructure/persistence/typeorm/entities/gameScene.entity';
 
-@ApiTags('game-scenes')
+@ApiTags('gamesScenes')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('game-scenes')
+@Controller('games/:gameId/scenes')
 export class GameSceneController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -52,17 +52,17 @@ export class GameSceneController {
     return this.queryBus.execute(new GetGameScenesQuery(Number(page), Number(limit)));
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get full scene by id' })
-  async findOne(@Param('id') id: string) {
-    return this.queryBus.execute(new GetGameSceneByIdQuery(id));
-  }
-
-  @Get('active/:gameId')
+  @Get('active')
   @ApiOperation({ summary: 'Get active scene by game id' })
   @ApiResponse({ status: HttpStatus.OK, type: GameSceneEntity, description: 'The active scene.' })
   async findActive(@Param('gameId') gameId: string) {
     return this.queryBus.execute(new GetActiveGameSceneByGameIdQuery(Number(gameId)));
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get full scene by id' })
+  async findOne(@Param('id') id: string) {
+    return this.queryBus.execute(new GetGameSceneByIdQuery(id));
   }
 
   @Patch(':id')
