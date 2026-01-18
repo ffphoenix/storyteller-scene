@@ -27,7 +27,10 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - .:/app
 
@@ -66,3 +69,17 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
     depends_on:
       - kafka
+
+  redis:
+    image: redis:latest
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    command: redis-server --requirepass 5b8088b9ae03758423087be503acecce
+    ports:
+      - '6379:6379'
+    volumes:
+      - ../redisdata:/data

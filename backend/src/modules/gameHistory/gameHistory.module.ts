@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CqrsModule } from '@nestjs/cqrs';
 import { GameHistoryEntity } from './infrastructure/persistence/typeorm/entities/gameHistory.entity';
 import { GameHistoryRepository } from './infrastructure/persistence/typeorm/repositories/gameHistory.repository';
+import { CachedGameHistoryRepository } from './infrastructure/persistence/CachedGameHistoryRepository';
 import { IGameHistoryRepository } from './domain/repositories/gameHistory.repository.interface';
 import { CreateGameHistoryItemHandler } from './application/commands/handlers/createGameHistoryItem.handler';
 import { SoftDeleteGameHistoryItemHandler } from './application/commands/handlers/softDeleteGameHistoryItem.handler';
@@ -24,9 +25,10 @@ MessagesRegistry.register([CreateGameHistoryItemCommand, SoftDeleteGameHistoryIt
   imports: [TypeOrmModule.forFeature([GameHistoryEntity]), CqrsModule, MessagingModule],
   controllers: [GameHistoryController],
   providers: [
+    GameHistoryRepository,
     {
       provide: IGameHistoryRepository,
-      useClass: GameHistoryRepository,
+      useClass: CachedGameHistoryRepository,
     },
     GameHistoryGateway,
     ...CommandHandlers,
