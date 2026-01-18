@@ -40,7 +40,7 @@ const createGrid = (layer: Konva.Layer) => {
     fillPatternRepeat: "repeat",
     listening: false,
   });
-  console.log("grid-=_+_", gridRect.toJSON());
+  // TODO: integrate this configuration
   gridRect.width(50 * 70);
   gridRect.height(50 * 70);
   gridRect.moveTo(layer);
