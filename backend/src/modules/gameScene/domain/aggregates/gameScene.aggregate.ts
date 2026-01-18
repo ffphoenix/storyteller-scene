@@ -202,7 +202,9 @@ export class GameScene extends AggregateRoot {
     if (stageLayer.children.find((o: KonvaNode) => objectsToAddIds.includes(o.attrs.id))) {
       throw new Error('Object ID already exists');
     }
-
+    payload.forEach((object) => {
+      object.attrs.draggable = false;
+    });
     stageLayer.children = [...stageLayer.children, ...payload];
 
     this.apply(new SceneObjectAddedEvent(this.id, layerId, payload, new Date()));
@@ -216,6 +218,7 @@ export class GameScene extends AggregateRoot {
       const objectIndex = stageLayer.children.findIndex((o: KonvaNode) => o.attrs.id === node.attrs.id);
       if (objectIndex === -1) throw new Error('Object not found in layer');
 
+      node.attrs.draggable = false;
       stageLayer.children[objectIndex] = { ...stageLayer.children[objectIndex], ...node };
 
       this.apply(new SceneObjectModifiedEvent(this.id, layerId, node.attrs.id, node, new Date()));

@@ -45,7 +45,7 @@ const createGrid = (layer: Konva.Layer) => {
   gridRect.height(50 * 70);
   gridRect.moveTo(layer);
   // TODO: find out why cache doesn't work
-  // gridRect.cache();
+  gridRect.cache();
 
   return gridRect;
 };

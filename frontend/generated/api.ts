@@ -785,6 +785,24 @@ export class Api<
      * No description
      *
      * @tags gamesScenes
+     * @name FindActive
+     * @summary Get active scene by game id
+     * @request GET:/api/games/{gameId}/scenes/active
+     * @secure
+     */
+    findActive: (gameId: string, params: RequestParams = {}) =>
+      this.request<GameSceneEntity, any>({
+        path: `/api/games/${gameId}/scenes/active`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags gamesScenes
      * @name FindOne
      * @summary Get full scene by id
      * @request GET:/api/games/{gameId}/scenes/{id}
@@ -836,24 +854,6 @@ export class Api<
         path: `/api/games/${gameId}/scenes/${id}`,
         method: "DELETE",
         secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags gamesScenes
-     * @name FindActive
-     * @summary Get active scene by game id
-     * @request GET:/api/games/{gameId}/scenes/active
-     * @secure
-     */
-    findActive: (gameId: string, params: RequestParams = {}) =>
-      this.request<GameSceneEntity, any>({
-        path: `/api/games/${gameId}/scenes/active`,
-        method: "GET",
-        secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -1001,11 +1001,11 @@ export class Api<
      * @tags GameHistory
      * @name GetById
      * @summary Get a single history item by ID
-     * @request GET:/api/history/{id}
+     * @request GET:/api/games/{gameId}/history/{id}
      */
-    getById: (id: string, params: RequestParams = {}) =>
+    getById: (id: string, gameId: string, params: RequestParams = {}) =>
       this.request<GameHistoryDto, any>({
-        path: `/api/history/${id}`,
+        path: `/api/games/${gameId}/history/${id}`,
         method: "GET",
         format: "json",
         ...params,
@@ -1017,11 +1017,11 @@ export class Api<
      * @tags GameHistory
      * @name Delete
      * @summary Soft-delete a history item
-     * @request DELETE:/api/history/{id}
+     * @request DELETE:/api/games/{gameId}/history/{id}
      */
-    delete: (id: string, params: RequestParams = {}) =>
+    delete: (id: string, gameId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/history/${id}`,
+        path: `/api/games/${gameId}/history/${id}`,
         method: "DELETE",
         ...params,
       }),

@@ -1135,7 +1135,7 @@
         ]
       }
     },
-    "/api/history/{id}": {
+    "/api/games/{gameId}/history/{id}": {
       "get": {
         "operationId": "getById",
         "parameters": [

@@ -11,14 +11,14 @@ import { PaginatedGameHistoryDto } from './dtos/paginatedGameHistory.dto';
 import { GameHistory } from '../../domain/aggregates/gameHistory.aggregate';
 
 @ApiTags('GameHistory')
-@Controller()
+@Controller('games/:gameId/history')
 export class GameHistoryController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Post('games/:gameId/history')
+  @Post()
   @ApiOperation({ summary: 'Create a new game history item' })
   @ApiResponse({ status: 201, type: GameHistoryDto })
   async create(@Param('gameId', ParseIntPipe) gameId: number, @Body() dto: CreateGameHistoryItemDto): Promise<GameHistoryDto> {
@@ -27,7 +27,7 @@ export class GameHistoryController {
     return this.mapToDto(history);
   }
 
-  @Get('games/:gameId/history')
+  @Get()
   @ApiOperation({ summary: 'Get history items for a game' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -61,7 +61,7 @@ export class GameHistoryController {
     };
   }
 
-  @Get('history/:id')
+  @Get(':id')
   @ApiOperation({ summary: 'Get a single history item by ID' })
   @ApiResponse({ status: 200, type: GameHistoryDto })
   async getById(@Param('id', ParseUUIDPipe) id: string): Promise<GameHistoryDto> {
@@ -69,7 +69,7 @@ export class GameHistoryController {
     return this.mapToDto(history);
   }
 
-  @Delete('history/:id')
+  @Delete(':id')
   @ApiOperation({ summary: 'Soft-delete a history item' })
   @ApiResponse({ status: 204 })
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
