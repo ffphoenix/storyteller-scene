@@ -4,23 +4,29 @@ import { InputText } from "primereact/inputtext";
 import { PaperPlaneIcon } from "../../../../../icons";
 import gameHistoryMessages from "../../store/GameHistoryMessages";
 import CurrentUser from "../../../../../globalStore/users/CurrentUser";
-import ApiClient from "../../../../../utils/apiClient";
 import gameStore from "../../../store/GameStore";
 
 const ChatInput: React.FC = () => {
   const [text, setText] = useState("");
   const handleSend = async () => {
+    console.log("Sending message...");
     const trimmed = text.trim();
     if (trimmed) {
       if (!gameStore?.game?.id) return;
 
-      await ApiClient.gameHistory.create(gameStore.game.id, {
-        type: "CHAT_MESSAGE",
-        body: { message: trimmed },
-        userId: 1,
-      });
       // For now using "Player" as placeholder author
       gameHistoryMessages.addUserMessage(CurrentUser.id, trimmed);
+      console.log("Message sent");
+      document.dispatchEvent(
+        new CustomEvent("history:messages:added", {
+          detail: {
+            type: "CHAT_MESSAGE",
+            body: { message: trimmed },
+            gameId: gameStore.game.id,
+            userId: 1,
+          },
+        }),
+      );
       setText("");
     }
   };

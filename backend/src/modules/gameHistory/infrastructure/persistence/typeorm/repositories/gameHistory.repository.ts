@@ -52,7 +52,7 @@ export class GameHistoryRepository implements IGameHistoryRepository {
     }
 
     const [entities, count] = await query
-      .orderBy('history.createdAt', 'DESC')
+      .orderBy('history.createdAt', 'ASC')
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();

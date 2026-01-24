@@ -7,12 +7,14 @@ import { observer } from "mobx-react-lite";
 import type { Stage } from "konva/lib/Stage";
 import ChatPanel from "./chat/ChatPanel";
 import ChatToggleButton from "./chat/ChatToggleButton";
+import useHistorySocket from "./useHistorySocket";
 
 type Props = {
   stageRef: MutableRefObject<Stage | null>;
 };
 
 const GameMenu: React.FC<Props> = ({ stageRef }) => {
+  useHistorySocket();
   return (
     <>
       <ChatPanel />

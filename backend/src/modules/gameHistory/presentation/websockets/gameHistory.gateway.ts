@@ -55,6 +55,7 @@ export class GameHistoryGateway implements OnGatewayConnection, OnGatewayDisconn
     @MessageBody() data: { type: string; userId: number; gameId: number; body: any },
     @ConnectedSocket() client: Socket,
   ) {
+    console.log('-+++++++++++++++++', data);
     await this.commandBus.execute(new CreateGameHistoryItemCommand(data.type, data.userId, data.gameId, data.body));
     // Note: The actual broadcast will be handled by the GameHistoryItemCreatedHandler
     // which reacts to the domain event.

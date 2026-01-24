@@ -4,9 +4,9 @@ import gameStore from "../../store/GameStore";
 import gameHistoryMessages from "../store/GameHistoryMessages";
 
 const useHistorySocket = () => {
-  const socket = socketManager.socket("/game-history");
-
   useEffect(() => {
+    const socket = socketManager.socket("/game-history");
+
     socket.connect();
     socket.emit("subscribeToGame", gameStore.game?.id);
 
@@ -14,12 +14,14 @@ const useHistorySocket = () => {
       console.log(data);
       gameHistoryMessages.addUserMessage(data.userId, data.body.message);
     });
-    document.addEventListener("history:user-message", (data) => {
-      socket.emit("createHistoryItem", data);
-    });
+    const onMessageAdded = (data: CustomEvent<string>) => {
+      socket.emit("createHistoryItem", data.detail);
+    };
+    document.addEventListener("history:messages:added", onMessageAdded as EventListener);
     return () => {
       socket.emit("unsubscribeFromGame", gameStore.game?.id);
       socket.disconnect();
+      document.removeEventListener("history:messages:added", onMessageAdded as EventListener);
     };
   }, []);
 };
