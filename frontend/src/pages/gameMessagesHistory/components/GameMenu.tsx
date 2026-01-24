@@ -1,8 +1,8 @@
 import React, { type MutableRefObject } from "react";
 import { Button } from "primereact/button";
-import { LayersIcon } from "../../icons";
+import { LayersIcon } from "../../gameScene/icons";
 import "./GameMenu.css";
-import SceneStore from "../../store/SceneStore";
+import SceneStore from "../../gameScene/store/SceneStore";
 import { observer } from "mobx-react-lite";
 import type { Stage } from "konva/lib/Stage";
 import ChatPanel from "./chat/ChatPanel";

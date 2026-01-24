@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { Button } from "primereact/button";
-import { ChatIcon } from "../../../../../icons";
+import { ChatIcon } from "../../../../icons";
 import gameHistoryMessages from "../../store/GameHistoryMessages";
 
 const ChatToggleButton: React.FC = () => {

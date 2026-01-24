@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { PaperPlaneIcon } from "../../../../../icons";
+import { PaperPlaneIcon } from "../../../../icons";
 import gameHistoryMessages from "../../store/GameHistoryMessages";
-import CurrentUser from "../../../../../globalStore/users/CurrentUser";
-import gameStore from "../../../store/GameStore";
+import CurrentUser from "../../../../globalStore/users/CurrentUser";
+import gameStore from "../../../gameScene/store/GameStore";
 
 const ChatInput: React.FC = () => {
   const [text, setText] = useState("");

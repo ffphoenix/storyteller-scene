@@ -1,6 +1,6 @@
-import socketManager from "../../../../utils/socketManager";
+import socketManager from "../../../utils/socketManager";
 import { useEffect } from "react";
-import gameStore from "../../store/GameStore";
+import gameStore from "../../gameScene/store/GameStore";
 import gameHistoryMessages from "../store/GameHistoryMessages";
 
 const useHistorySocket = () => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import gameHistoryMessages, { type HistoryMessage } from "../../store/GameHistoryMessages";
-import CurrentUser from "../../../../../globalStore/users/CurrentUser";
+import CurrentUser from "../../../../globalStore/users/CurrentUser";
 
 const ChatMessageItem: React.FC<{ message: HistoryMessage }> = ({ message }) => {
   const isSystem = message.type === "SYSTEM_MESSAGE";

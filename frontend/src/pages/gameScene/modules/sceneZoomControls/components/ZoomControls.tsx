@@ -3,7 +3,7 @@ import Konva from "konva";
 import SceneStore from "../../../store/SceneStore";
 import { observer } from "mobx-react-lite";
 import { MAX_ZOOM, MIN_ZOOM } from "../../../constants/uiConstants";
-import gameHistoryMessages from "../../../gameMessagesHistory/store/GameHistoryMessages";
+import gameHistoryMessages from "../../../../gameMessagesHistory/store/GameHistoryMessages";
 
 const zoomByFactor = (stageRef: MutableRefObject<Konva.Stage | null>, factor: number) => {
   if (!stageRef.current) return;

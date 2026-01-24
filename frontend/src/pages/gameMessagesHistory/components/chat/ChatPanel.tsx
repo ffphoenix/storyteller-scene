@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { Button } from "primereact/button";
-import { CloseIcon } from "../../../../../icons";
+import { CloseIcon } from "../../../../icons";
 import gameHistoryMessages from "../../store/GameHistoryMessages";
 import ChatMessageList from "./ChatMessageList";
 import ChatInput from "./ChatInput";
@@ -11,7 +11,7 @@ const ChatPanel: React.FC = () => {
 
   return (
     <div
-      className="absolute right-[40px] top-0  h-full w-80 bg-white border-r shadow-2xl z-1001 flex flex-col animate-fadein"
+      className="absolute right-[40px] top-0  h-full w-80 bg-white border-l shadow-2xl z-1001 flex flex-col animate-fadein"
       style={{ animationDuration: "0.2s" }}
     >
       {/* Header */}

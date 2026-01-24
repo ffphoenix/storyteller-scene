@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { generateUUID } from "../../utils/uuid";
+import { generateUUID } from "../../gameScene/utils/uuid";
 
 export type MessageType = "CHAT_MESSAGE" | "DICE_ROLL" | "SYSTEM_MESSAGE";
 

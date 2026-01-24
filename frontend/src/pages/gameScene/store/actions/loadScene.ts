@@ -1,7 +1,7 @@
 import ApiClient from "../../../../utils/apiClient";
 import sceneStore from "../SceneStore";
 import gameStore from "../GameStore";
-import gameHistoryMessages from "../../gameMessagesHistory/store/GameHistoryMessages";
+import gameHistoryMessages from "../../../gameMessagesHistory/store/GameHistoryMessages";
 
 export default async function loadScene(shortURL: string) {
   try {

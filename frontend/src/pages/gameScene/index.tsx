@@ -9,8 +9,7 @@ import useSceneHistory from "./modules/sceneHistory/useSceneHistory";
 import SceneContextMenu from "./modules/sceneTools/components/SceneContextMenu";
 import useSceneSocket from "./modules/sceneSocket/useSceneSocket";
 import sceneStore from "./store/SceneStore";
-import GameMenu from "./gameMessagesHistory/components/GameMenu";
-import ChatPanel from "./gameMessagesHistory/components/chat/ChatPanel";
+import GameMenu from "../gameMessagesHistory/components/GameMenu";
 
 const GameScenePage: React.FC = () => {
   const { stageRef, containerRef } = useStage();
